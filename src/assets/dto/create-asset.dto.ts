@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDateString, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateAssetDto {
 
@@ -53,6 +53,7 @@ export class CreateAssetDto {
     @ApiProperty({ description: "id ผู้ลงทะเบียน", example: "9165061501" })
     staff_employee_detail: number
 
+    @IsOptional()
     @IsDateString()
     @ApiProperty({ description: "วันหมดประกัน", example: new Date() })
     waranty_expires: Date

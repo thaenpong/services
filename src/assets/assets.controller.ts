@@ -25,17 +25,22 @@ export class AssetsController {
   }
 
   @Get(':id')
+  @ApiTags("asset")
   findOne(@Param('id') id: string) {
     return this.assetsService.findOne(+id);
   }
 
   @Patch(':id')
+  @UsePipes(ValidationPipe)
+  @ApiCreatedResponse({ description: "อัพเดทข้อมูล ทรัพย์สินที่ลงทะเบียน" })
+  @ApiBadRequestResponse({ description: "ไม่สามารถบันทึกข้อมูลได้" })
+  @ApiTags("asset")
   update(@Param('id') id: string, @Body() updateAssetDto: UpdateAssetDto) {
     return this.assetsService.update(+id, updateAssetDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.assetsService.remove(+id);
-  }
+  /*   @Delete(':id')
+    remove(@Param('id') id: string) {
+      return this.assetsService.remove(+id);
+    } */
 }
