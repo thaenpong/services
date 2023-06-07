@@ -53,5 +53,7 @@ export class Asset {
     @Column({ default: null, comment: "วันหมดประกัน" })
     waranty_expires: Date
 
+   /*  @OneToMany(() => Asset, asset => asset.category)
+    assets: Asset[]; */
 
 }
