@@ -8,6 +8,7 @@ import { DataSource } from 'typeorm';
 import { CategoriesModule } from './categories/categories.module';
 import { Category } from './categories/entities/category.entity';
 import { JobsModule } from './jobs/jobs.module';
+import { Job } from './jobs/entities/job.entity';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -18,7 +19,7 @@ import { JobsModule } from './jobs/jobs.module';
     username: 'root',
     password: '',
     database: 'services',
-    entities: [Asset, Category],
+    entities: [Asset, Category, Job],
     synchronize: true,
   }), AssetsModule, CategoriesModule, JobsModule,],
   controllers: [AppController],

@@ -1,5 +1,6 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Category } from "src/categories/entities/category.entity";
+import { Job } from "src/jobs/entities/job.entity";
 @Entity()
 export class Asset {
     @PrimaryGeneratedColumn()
@@ -53,7 +54,7 @@ export class Asset {
     @Column({ default: null, comment: "วันหมดประกัน" })
     waranty_expires: Date
 
-   /*  @OneToMany(() => Asset, asset => asset.category)
-    assets: Asset[]; */
+    @OneToMany(() => Job, job => job.asset)
+    job: Job[];
 
 }

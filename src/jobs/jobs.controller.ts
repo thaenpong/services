@@ -1,13 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe } from '@nestjs/common';
 import { JobsService } from './jobs.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
+import { ApiBadRequestResponse, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('jobs')
 export class JobsController {
-  constructor(private readonly jobsService: JobsService) {}
+  constructor(private readonly jobsService: JobsService) { }
 
   @Post()
+  @UsePipes(ValidationPipe)
+  @ApiCreatedResponse({ description: "บันทึกข้อมูลแจ้งซ่อมสำเร็จ" })
+  @ApiBadRequestResponse({ description: "ไม่สามารถบันทึกข้อมูลได้" })
+  @ApiTags('job')
   create(@Body() createJobDto: CreateJobDto) {
     return this.jobsService.create(createJobDto);
   }
@@ -27,8 +32,5 @@ export class JobsController {
     return this.jobsService.update(+id, updateJobDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.jobsService.remove(+id);
-  }
+
 }

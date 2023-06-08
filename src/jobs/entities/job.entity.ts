@@ -4,16 +4,16 @@ import { Asset } from "src/assets/entities/asset.entity";
 @Entity()
 export class Job {
     @PrimaryGeneratedColumn()
-    id:number;
+    id: number;
 
     @Column({ nullable: false, comment: "id ผู้ใช้", type: 'bigint' })
     user_employee_id: number
 
-    /* @ManyToOne(() => Asset, asset => asset.job, { nullable: false, })
-    category: Asset; */
+    @ManyToOne(() => Asset, asset => asset.job, { nullable: false, })
+    asset: Asset;
 
-    @Column({ nullable:false, comment: "อาการ" })
-    user_detail:string
+    @Column({ nullable: false, comment: "อาการ" })
+    user_detail: string
 
     @CreateDateColumn({ type: 'timestamp', comment: "วันที่สร้าง" })
     datecreate: Date
@@ -37,5 +37,5 @@ export class Job {
     done_status: number
 
     @Column({ default: null, comment: "รายระเอียดการซ่อม" })
-    done_detail:string
+    done_detail: string
 }
