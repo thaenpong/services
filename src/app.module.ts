@@ -13,11 +13,11 @@ import { Job } from './jobs/entities/job.entity';
 @Module({
   imports: [TypeOrmModule.forRoot({
     type: 'mysql',
-    /* host: '159.223.89.150', */
-    host: 'localhost',
+    host: '159.223.89.150',
+    /* host: 'localhost', */
     port: 3306,
     username: 'root',
-    password: '',
+    password: 'Admin1989',
     database: 'services',
     entities: [Asset, Category, Job],
     synchronize: true,
