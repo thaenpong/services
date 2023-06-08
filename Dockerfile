@@ -15,7 +15,5 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-RUN npm run start
-
-EXPOSE 8080
-CMD [ "node", "dist/main.js" ]
+EXPOSE 3000
+CMD [ "node", "dist/main" ]
