@@ -24,7 +24,7 @@ export class Job {
     @Column({ type: 'timestamp', default: null, comment: "วันที่รับงาน" })
     accept_date: Date
 
-    @Column({ default: 1, comment: "1. รับซ่อม, 2. ส่งซ่อมภายนอก" })
+    @Column({ default: null, comment: "1. รับซ่อม, 2. ส่งซ่อมภายนอก" })
     accept_status: number
 
     @Column({ default: null, comment: "id ผู้รับงาน", type: 'bigint' })
@@ -33,9 +33,9 @@ export class Job {
     @Column({ type: 'timestamp', default: null, comment: "วันที่ปิดงาน" })
     done_date: Date
 
-    @Column({ default: 1, comment: "1. ใช้งานได้, 2. ใช้งานไม่ได้" })
+    @Column({ default: null, comment: "1. ใช้งานได้, 2. ใช้งานไม่ได้" })
     done_status: number
 
     @Column({ default: null, comment: "รายระเอียดการซ่อม" })
-    done_detail: string
+    staff_detail: string
 }

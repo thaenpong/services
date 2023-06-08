@@ -1,8 +1,9 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe } from '@nestjs/common';
 import { JobsService } from './jobs.service';
 import { CreateJobDto } from './dto/create-job.dto';
-import { UpdateJobDto } from './dto/update-job.dto';
+import { AcceptJobDto } from './dto/accept-job.dto';
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { DoneJobDto } from './dto/done-job.dto';
 
 @Controller('jobs')
 export class JobsController {
@@ -35,10 +36,29 @@ export class JobsController {
     return this.jobsService.findOne(+id);
   }
 
-  @Patch(':id')
+
+  @Patch('accept/:id')
+  @ApiTags('job')
+  @UsePipes(ValidationPipe)
+  @ApiOkResponse({ description: "บันทึกข้อมูลพนักงานที่รับงาน" })
+  @ApiBadRequestResponse({ description: "ไม่มารถอัพเดทข้อมูลได้/ รับงานไปแล้ว " })
+  accept(@Param('id') id: number, @Body() acceptJobDto: AcceptJobDto) {
+    return this.jobsService.accept(+id, acceptJobDto);
+  }
+
+  @Patch('done/:id')
+  @UsePipes(ValidationPipe)
+  @ApiTags('job')
+  @ApiOkResponse({ description: "บันทึกข้อมูล / ปิดงาน" })
+  @ApiBadRequestResponse({ description: "ไม่มารถอัพเดทข้อมูลได้/ งานปิดไปแล้ว " })
+  done(@Param('id') id: number, @Body() doneJobDto: DoneJobDto) {
+    return this.jobsService.done(+id, doneJobDto);
+  }
+
+  /* @Patch(':id')
   update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
     return this.jobsService.update(+id, updateJobDto);
-  }
+  } */
 
 
 }

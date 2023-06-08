@@ -51,7 +51,7 @@ export class CreateAssetDto {
     @IsNotEmpty()
     @IsNumber()
     @ApiProperty({ description: "id ผู้ลงทะเบียน", example: "9165061501" })
-    staff_employee_detail: number
+    staff_employee_id: number
 
     @IsOptional()
     @IsDateString()

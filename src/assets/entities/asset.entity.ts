@@ -42,7 +42,7 @@ export class Asset {
     @CreateDateColumn({ type: 'timestamp', comment: "วันที่ลงทะเบียน" })
     datecreate: Date
 
-    @Column({ default: null, comment: "id ผู้ลงทะเบียน", type: 'bigint' })
+    @Column({ nullable: false, comment: "id ผู้ลงทะเบียน", type: 'bigint' })
     staff_employee_id: number
 
     @Column({ type: 'timestamp', default: null, comment: "วันที่ถอดถอน" })
