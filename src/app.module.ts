@@ -14,7 +14,7 @@ import { Job } from './jobs/entities/job.entity';
   imports: [TypeOrmModule.forRoot({
     type: 'mysql',
     host: '159.223.89.150',
-    /* host: 'localhost', */
+    /*  host: 'localhost', */
     port: 3306,
     username: 'root',
     password: 'Admin1989',

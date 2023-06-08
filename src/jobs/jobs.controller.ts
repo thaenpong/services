@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, Validation
 import { JobsService } from './jobs.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
-import { ApiBadRequestResponse, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('jobs')
 export class JobsController {
@@ -17,13 +17,21 @@ export class JobsController {
     return this.jobsService.create(createJobDto);
   }
 
-  @Get()
-  findAll() {
-    return this.jobsService.findAll();
+  @Get('status/:status')
+  @ApiOkResponse({ description: "รายการแจ้งซ่อมตามสถานะงาน 1.ยังไม่รับงาน 2. กำลังปฎิบัติ 3.เสร็จ 4.ยกเลิก" })
+  @ApiBadRequestResponse({ description: "ไม่มารถค้นหาข้อมูลได้ / สถานะไม่ถูกต้อง" })
+  @ApiTags('job')
+  finds(@Param('status') status: number) {
+    return this.jobsService.finds(+status);
   }
 
+
+
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  @ApiOkResponse({ description: "แสดงรายระเอียดงาน" })
+  @ApiBadRequestResponse({ description: "ไม่มารถค้นหาข้อมูลได้" })
+  @ApiTags('job')
+  findOne(@Param('id') id: number) {
     return this.jobsService.findOne(+id);
   }
 

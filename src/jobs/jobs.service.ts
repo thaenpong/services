@@ -39,12 +39,36 @@ export class JobsService {
     }
   }
 
-  findAll() {
-    return `This action returns all jobs`;
+  async finds(status: number) {
+    try {
+      const res = await this.JobResponsitory.find({ where: { status: status }, relations: ['asset'] })
+      return { 'massage': 'success', 'data': res }
+    } catch (error) {
+      // return error
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: error.message,
+        },
+        HttpStatus.BAD_REQUEST
+      );
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} job`;
+  async findOne(id: number) {
+    try {
+      const res = await this.JobResponsitory.findOne({ where: { id: id }, relations: ['asset'] })
+      return { 'massage': 'success', 'data': res }
+    } catch (error) {
+      // return error
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: error.message,
+        },
+        HttpStatus.BAD_REQUEST
+      );
+    }
   }
 
   update(id: number, updateJobDto: UpdateJobDto) {
