@@ -4,6 +4,7 @@ import { CreateJobDto } from './dto/create-job.dto';
 import { AcceptJobDto } from './dto/accept-job.dto';
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { DoneJobDto } from './dto/done-job.dto';
+import { CancelJobDto } from './dto/cancel-job.dto';
 
 @Controller('jobs')
 export class JobsController {
@@ -53,6 +54,15 @@ export class JobsController {
   @ApiBadRequestResponse({ description: "ไม่มารถอัพเดทข้อมูลได้/ งานปิดไปแล้ว " })
   done(@Param('id') id: number, @Body() doneJobDto: DoneJobDto) {
     return this.jobsService.done(+id, doneJobDto);
+  }
+
+  @Patch('done/:id')
+  @UsePipes(ValidationPipe)
+  @ApiTags('job')
+  @ApiOkResponse({ description: "ยกเลิกงานซ่อม" })
+  @ApiBadRequestResponse({ description: "ไม่มารถอัพเดทข้อมูลได้" })
+  cancel(@Param('id') id: number, @Body() cancelJobDto: CancelJobDto) {
+    return this.jobsService.cancel(+id, cancelJobDto);
   }
 
   /* @Patch(':id')

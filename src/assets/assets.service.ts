@@ -103,7 +103,7 @@ export class AssetsService {
         // update
         const update = await this.AssetsRespository.update(id, updateAssetDto);
         // เรียกข้อมูล
-        const res = await this.AssetsRespository.findOne({ where: { id: id } })
+        const res = await this.AssetsRespository.findOne({ where: { id: id }, relations: ['category'] })
         // return
         return { 'message': 'success', 'data': res };
       }
