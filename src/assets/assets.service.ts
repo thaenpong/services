@@ -31,6 +31,7 @@ export class AssetsService {
         delete createAssetDto.categories_id;
         // บันทึกข้อมูล
         createAssetDto.category = category;
+        // insert
         const insert = await this.AssetsRespository.save(createAssetDto);
         return { 'message': 'success', 'data': insert };
       }
@@ -86,18 +87,26 @@ export class AssetsService {
   }
 
   //--------------------------------------------------------------------------- อัพเดทข้อมูล
-  async update(id: number, updateAssetDto: UpdateAssetDto) {
+  async update(id, updateAssetDto) {
     try {
 
       //เปลี่ยนให้เป็นตัวใหญ่
       updateAssetDto.code = updateAssetDto.code.toUpperCase();
-
-      // บันทึกข้อมูล
-      const update = await this.AssetsRespository.update(id, updateAssetDto);
-      // เรียกข้อมูล
-      const res = await this.AssetsRespository.findOne({ where: { id: id } })
-      // return
-      return { 'message': 'success', 'data': res };
+      const category = await this.CategoriesRespository.findOne({ where: { id: updateAssetDto.categories_id } })
+      if (!category) {
+        throw new Error("Category ID not found in the database")
+      } else {
+        //ลบ categories_id
+        delete updateAssetDto.categories_id;
+        // บันทึกข้อมูล
+        updateAssetDto.category = category;
+        // update
+        const update = await this.AssetsRespository.update(id, updateAssetDto);
+        // เรียกข้อมูล
+        const res = await this.AssetsRespository.findOne({ where: { id: id } })
+        // return
+        return { 'message': 'success', 'data': res };
+      }
     } catch (error) {
       // return error
       throw new HttpException(
