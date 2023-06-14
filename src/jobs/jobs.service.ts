@@ -5,6 +5,8 @@ import { Job } from './entities/job.entity';
 import { Repository } from 'typeorm';
 import { Asset } from 'src/assets/entities/asset.entity';
 import { DoneJobDto } from './dto/done-job.dto';
+import { verify } from 'crypto';
+import { VerifyJobDto } from './dto/verify-job.dto';
 
 @Injectable()
 export class JobsService {
@@ -181,4 +183,10 @@ export class JobsService {
       );
     }
   }
+
+  async verify(id, verifyJobDto: VerifyJobDto) {
+    console.log(id, verifyJobDto);
+  }
 }
+
+

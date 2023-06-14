@@ -5,6 +5,7 @@ import { AcceptJobDto } from './dto/accept-job.dto';
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { DoneJobDto } from './dto/done-job.dto';
 import { CancelJobDto } from './dto/cancel-job.dto';
+import { VerifyJobDto } from './dto/verify-job.dto';
 
 @Controller('jobs')
 export class JobsController {
@@ -26,8 +27,6 @@ export class JobsController {
   finds(@Param('status') status: number) {
     return this.jobsService.finds(+status);
   }
-
-
 
   @Get(':id')
   @ApiOkResponse({ description: "แสดงรายระเอียดงาน" })
@@ -65,10 +64,14 @@ export class JobsController {
     return this.jobsService.cancel(+id, cancelJobDto);
   }
 
-  /* @Patch(':id')
-  update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
-    return this.jobsService.update(+id, updateJobDto);
-  } */
+  @Patch('verify/:id')
+  @UsePipes(ValidationPipe)
+  @ApiTags('job')
+  @ApiOkResponse({ description: "ประเมินงานซ่อม" })
+  @ApiBadRequestResponse({ description: "ข้อมูลไม่ถูกต้อง" })
+  verify(@Param('id') id: number, @Body() verifyJobDto: VerifyJobDto) {
+    return this.jobsService.verify(+id, verifyJobDto)
+  }
 
 
 }
