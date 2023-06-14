@@ -143,4 +143,42 @@ export class JobsService {
     }
   }
 
+  //----------------------------------------------------------------------------------------------------------------- ยกเลิกงาน
+  async cancel(id, cancelJobDto) {
+    try {
+      cancelJobDto.cancel_date = new Date;
+      cancelJobDto.status = 4;
+      const job = await this.JobResponsitory.findOne({ where: { id: id } });
+      if (job) {
+        switch (job.status) {
+          case 2:
+            throw new Error("Job ID already accept");
+
+          case 3:
+            throw new Error("Job ID already done");
+
+          case 4:
+            throw new Error("Job ID already cancel");
+
+          default:
+            if (job.status)
+              await this.JobResponsitory.update(id, cancelJobDto);
+            const res = await this.JobResponsitory.findOne({ where: { id: id }, relations: ['asset'] });
+            return { 'message': 'success', 'data': res }
+        }
+
+      } else {
+        throw new Error("Job ID not found in the database");
+      }
+    } catch (error) {
+      // return error
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: error.message,
+        },
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
 }

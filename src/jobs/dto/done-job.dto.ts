@@ -10,7 +10,7 @@ export class DoneJobDto {
     @IsNotEmpty()
     @IsString()
     @ApiProperty({ description: "รายระเอียดการซ๋อม", example: "เปลียนแรม" })
-    staff_detail: string;
+    done_staff_detail: string;
 
     done_date: Date;
 

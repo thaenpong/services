@@ -28,7 +28,7 @@ export class Job {
     accept_status: number
 
     @Column({ default: null, comment: "id ผู้รับงาน", type: 'bigint' })
-    staff_employee_id: number
+    accept_staff_employee_id: number
 
     @Column({ type: 'timestamp', default: null, comment: "วันที่ปิดงาน" })
     done_date: Date
@@ -37,5 +37,11 @@ export class Job {
     done_status: number
 
     @Column({ default: null, comment: "รายระเอียดการซ่อม" })
-    staff_detail: string
+    done_staff_detail: string
+
+    @Column({ type: 'timestamp', default: null, comment: "วันที่ยกเลิกงาน" })
+    cancel_date: Date
+
+    @Column({ default: null, comment: "id ผู้ยกเลิกงาน", type: 'bigint' })
+    cancel_staff_employee_id: number
 }

@@ -10,7 +10,7 @@ export class AcceptJobDto {
     @IsNotEmpty()
     @IsNumber()
     @ApiProperty({ description: "id ผู้รับงาน", example: "9165061501" })
-    staff_employee_id: number;
+    accept_staff_employee_id: number;
 
     @IsNotEmpty()
     @IsNumber()

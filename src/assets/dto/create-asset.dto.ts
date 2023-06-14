@@ -56,5 +56,5 @@ export class CreateAssetDto {
     @IsOptional()
     @IsDateString()
     @ApiProperty({ description: "วันหมดประกัน", example: new Date() })
-    waranty_expires: Date
+    warranty_expires: Date
 }

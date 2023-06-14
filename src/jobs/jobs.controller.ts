@@ -56,7 +56,7 @@ export class JobsController {
     return this.jobsService.done(+id, doneJobDto);
   }
 
-  @Patch('done/:id')
+  @Patch('cancel/:id')
   @UsePipes(ValidationPipe)
   @ApiTags('job')
   @ApiOkResponse({ description: "ยกเลิกงานซ่อม" })

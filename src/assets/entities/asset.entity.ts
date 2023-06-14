@@ -51,8 +51,8 @@ export class Asset {
     @Column({ default: null, comment: "id ผู้ถอดถอน", type: 'bigint' })
     staff_employee_id_remove: number
 
-    @Column({ default: null, comment: "วันหมดประกัน" })
-    waranty_expires: Date
+    @Column({ nullable: true, default: null, comment: "วันหมดประกัน" })
+    warranty_expires: Date
 
     @OneToMany(() => Job, job => job.asset)
     job: Job[];
