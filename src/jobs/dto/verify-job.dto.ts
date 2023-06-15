@@ -8,7 +8,7 @@ export class VerifyJobDto {
     employee_id: number;
 
     @IsNotEmpty()
-    @IsBoolean()
+    @IsNumber()
     @ApiProperty({ description: "การประเมิน", example: 0 })
     is_acceptable: boolean;
 }

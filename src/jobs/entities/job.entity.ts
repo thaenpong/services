@@ -1,5 +1,8 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Asset } from "src/assets/entities/asset.entity";
+import { JobStatus } from "src/status/entities/jobs_status.entity";
+import { JobAcceptStatus } from "../../status/entities/job_accept_status.entity";
+import { JobDoneStatus } from "src/status/entities/job-done-status.entity";
 
 @Entity()
 export class Job {
@@ -18,13 +21,13 @@ export class Job {
     @CreateDateColumn({ type: 'timestamp', comment: "วันที่สร้าง" })
     datecreate: Date
 
-    @Column({ default: 1, comment: "1. ยังไม่รับงาน, 2. กำลังปฎิบัติ, 3. เสร็จ, 4. ยกเลิก" })
-    status: number
+    @ManyToOne(() => JobStatus, jobstatus => jobstatus.job, { nullable: false })
+    status: JobStatus;
 
     @Column({ type: 'timestamp', default: null, comment: "วันที่รับงาน" })
     accept_date: Date
 
-    @Column({ default: null, comment: "1. รับซ่อม, 2. ส่งซ่อมภายนอก" })
+    @ManyToOne(() => JobAcceptStatus, accept_status => accept_status.job, { nullable: true, })
     accept_status: number
 
     @Column({ default: null, comment: "id ผู้รับงาน", type: 'bigint' })
@@ -33,7 +36,7 @@ export class Job {
     @Column({ type: 'timestamp', default: null, comment: "วันที่ปิดงาน" })
     done_date: Date
 
-    @Column({ default: null, comment: "1. ใช้งานได้, 2. ใช้งานไม่ได้" })
+    @ManyToOne(() => JobDoneStatus, done_status => done_status.job, { nullable: true, })
     done_status: number
 
     @Column({ default: null, comment: "รายระเอียดการซ่อม" })
@@ -44,4 +47,14 @@ export class Job {
 
     @Column({ default: null, comment: "id ผู้ยกเลิกงาน", type: 'bigint' })
     cancel_staff_employee_id: number
+
+    @Column({ default: null, comment: "id พนักงาน", type: 'bigint' })
+    verify_employee_id: number
+
+    @Column({ default: null, type: "tinyint", comment: "ระดับความพอใจ" })
+    verify_acceptable: number
+
+    @Column({ default: null, comment: "วันที่ verify" })
+    verify_date: number
+
 }
