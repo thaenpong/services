@@ -1,5 +1,12 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Asset } from "src/assets/entities/asset.entity";
+<<<<<<< Updated upstream
+=======
+import { JobStatus } from "src/status/entities/jobs_status.entity";
+import { JobAcceptStatus } from "../../status/entities/job_accept_status.entity";
+import { JobDoneStatus } from "src/status/entities/job-done-status.entity";
+import { JobAcceptable } from "src/status/entities/job_acceptable.entity";
+>>>>>>> Stashed changes
 
 @Entity()
 export class Job {
@@ -54,6 +61,14 @@ export class Job {
     @Column({ default: null, comment: "id ผู้ยกเลิกงาน", type: 'bigint' })
     cancel_staff_employee_id: number
 
+<<<<<<< Updated upstream
 
+=======
+    @ManyToOne(() => JobAcceptable, verify_acceptable => verify_acceptable.job, { nullable: true, })
+    verify_acceptable: number
+
+    @Column({ default: null, comment: "วันที่ verify" })
+    verify_date: Date
+>>>>>>> Stashed changes
 
 }
