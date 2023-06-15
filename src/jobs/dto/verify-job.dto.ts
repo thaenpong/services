@@ -5,10 +5,10 @@ export class VerifyJobDto {
     @IsNotEmpty()
     @IsNumber()
     @ApiProperty({ description: "ID พนักงาน", example: 9165061501 })
-    employee_id: number;
+    employee_code: number;
 
     @IsNotEmpty()
-    @IsBoolean()
+    @IsNumber()
     @ApiProperty({ description: "การประเมิน", example: 0 })
-    is_acceptable: boolean;
+    is_acceptable: number;
 }

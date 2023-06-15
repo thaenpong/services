@@ -98,16 +98,23 @@ export class JobsService {
 
   //------------------------------------------------------------------------------------------------------------------ รับงาน
   async accept(id: number, acceptJobDto: AcceptJobDto) {
+
     try {
-      //กำหนดวันที่รับงาน
-      acceptJobDto.accept_date = new Date;
-      //เปลี่ยน สถานะงาน
-      acceptJobDto.status = 2;
-      //update ข้อมูล
-      const update = await this.JobResponsitory.update(id, acceptJobDto);
-      //เรียกข้อมูล
-      const res = await this.JobResponsitory.findOne({ where: { id: id }, relations: ['asset'] });
-      return { 'message': 'success', 'data': res }
+      const job = await this.JobResponsitory.findOne({ where: { id: id } });
+      if (!job) { throw new Error("Job ID not found in the database"); }
+      if (job.status === 1) {
+        //กำหนดวันที่รับงาน
+        acceptJobDto.accept_date = new Date;
+        //เปลี่ยน สถานะงาน
+        acceptJobDto.status = 2;
+        //update ข้อมูล
+        const update = await this.JobResponsitory.update(id, acceptJobDto);
+        //เรียกข้อมูล
+        const res = await this.JobResponsitory.findOne({ where: { id: id }, relations: ['asset'] });
+        return { 'message': 'success', 'data': res }
+      } else {
+        throw new Error("Job ID not in a pending state");
+      }
     } catch (error) {
       // return error
       throw new HttpException(
@@ -123,16 +130,22 @@ export class JobsService {
   //-------------------------------------------------------------------------------------------------------------------- ปิดงาน
   async done(id: number, doneJobDto: DoneJobDto) {
     try {
-      //กำหนดวันที่รับงาน
-      doneJobDto.done_date = new Date;
-      //เปลี่ยน สถานะงาน
-      doneJobDto.status = 3;
-      //update ข้อมูล
-      const update = await this.JobResponsitory.update(id, doneJobDto);
+      const job = await this.JobResponsitory.findOne({ where: { id: id } });
+      if (!job) { throw new Error("Job ID not found in the database"); }
+      if (job.status === 2) {
+        //กำหนดวันที่รับงาน
+        doneJobDto.done_date = new Date;
+        //เปลี่ยน สถานะงาน
+        doneJobDto.status = 3;
+        //update ข้อมูล
+        const update = await this.JobResponsitory.update(id, doneJobDto);
 
-      //เรียกข้อมูล
-      const res = await this.JobResponsitory.findOne({ where: { id: id }, relations: ['asset'] });
-      return { 'message': 'success', 'data': res }
+        //เรียกข้อมูล
+        const res = await this.JobResponsitory.findOne({ where: { id: id }, relations: ['asset'] });
+        return { 'message': 'success', 'data': res }
+      } else {
+        throw new Error("Job ID not accepted");
+      }
     } catch (error) {
       // return error
       throw new HttpException(
@@ -154,13 +167,13 @@ export class JobsService {
       if (job) {
         switch (job.status) {
           case 2:
-            throw new Error("Job ID already accept");
+            throw new Error("Job ID already accepted");
 
           case 3:
-            throw new Error("Job ID already done");
+            throw new Error("Job ID completed");
 
           case 4:
-            throw new Error("Job ID already cancel");
+            throw new Error("Job ID already verified");
 
           default:
             if (job.status)
@@ -184,8 +197,40 @@ export class JobsService {
     }
   }
 
-  async verify(id, verifyJobDto: VerifyJobDto) {
-    console.log(id, verifyJobDto);
+  async verify(id, verifyJobDto) {
+
+    try {
+      const job = await this.JobResponsitory.findOne({ where: { id: id, user_employee_id: verifyJobDto.user_employee_id } })
+      if (!job) {
+        throw new Error("Job ID not found in the database");
+      } else {
+        if (job.status === 3) {
+
+          const verify = {
+            'verify_user_employee_id': verifyJobDto.employee_code,
+            'verify_is_acceptable': verifyJobDto.is_acceptable,
+            'verify_date': new Date,
+            'status': 4,
+          }
+
+          await this.JobResponsitory.update(id, verify);
+
+          const res = await this.JobResponsitory.findOne({ where: { id: id }, relations: ['asset'] });
+          return { 'message': 'success', 'data': res }
+        } else {
+          throw new Error("Incomplete job status");
+        }
+      }
+    } catch (error) {
+      // return error
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: error.message,
+        },
+        HttpStatus.BAD_REQUEST
+      );
+    }
   }
 }
 
