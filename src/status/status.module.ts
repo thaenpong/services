@@ -1,15 +1,17 @@
 import { Module } from '@nestjs/common';
 import { StatusService } from './status.service';
 import { StatusController } from './status.controller';
-import { JobStatus } from './entities/jobs_status.entity';
-import { JobAcceptStatus } from './entities/job_accept_status.entity';
-import { JobDoneStatus } from './entities/job-done-status.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JobAcceptable } from './entities/job_acceptable.entity';
-import { AssetStatus } from './entities/asset-status.entity';
+import { Job } from 'src/jobs/entities/job.entity';
+import { Asset } from 'src/assets/entities/asset.entity';
+import { JobStatus } from './entities/job-status.entity';
+import { JobAcceptStatus } from './entities/job-accept-status.entity';
+import { JobDoneStatus } from './entities/job-done-status.entiy';
+import { JobVerifyStatus } from './entities/Job-verify-status.entity';
+import { AssetStatus } from './entities/asset-status.entyty';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([JobStatus, JobAcceptStatus, JobDoneStatus, JobAcceptable, AssetStatus])],
+  imports: [TypeOrmModule.forFeature([Job, Asset, JobStatus, JobAcceptStatus, JobDoneStatus, JobVerifyStatus, AssetStatus])],
   controllers: [StatusController],
   providers: [StatusService]
 })

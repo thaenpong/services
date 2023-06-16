@@ -4,6 +4,11 @@ import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 export class DoneJobDto {
     @IsNotEmpty()
     @IsNumber()
+    @ApiProperty({ description: "id ผู้ปิดงาน", example: 9165061501 })
+    staff_employee_id: number;
+
+    @IsNotEmpty()
+    @IsNumber()
     @ApiProperty({ description: "สถานะหลังปิดงาน 1. ใช้งานได้ , 2. ใช้งานไม่ได้", example: 1 })
     done_status: number;
 

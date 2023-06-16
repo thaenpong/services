@@ -1,12 +1,10 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Asset } from "src/assets/entities/asset.entity";
-<<<<<<< Updated upstream
-=======
-import { JobStatus } from "src/status/entities/jobs_status.entity";
-import { JobAcceptStatus } from "../../status/entities/job_accept_status.entity";
-import { JobDoneStatus } from "src/status/entities/job-done-status.entity";
-import { JobAcceptable } from "src/status/entities/job_acceptable.entity";
->>>>>>> Stashed changes
+import { JobStatus } from 'src/status/entities/job-status.entity';
+import { JobAcceptStatus } from 'src/status/entities/job-accept-status.entity';
+import { JobDoneStatus } from 'src/status/entities/job-done-status.entiy';
+import { JobVerifyStatus } from "src/status/entities/Job-verify-status.entity";
+
 
 @Entity()
 export class Job {
@@ -16,6 +14,7 @@ export class Job {
     @Column({ nullable: false, comment: "id ผู้ใช้", type: 'bigint' })
     user_employee_id: number
 
+    //join asset
     @ManyToOne(() => Asset, asset => asset.job, { nullable: false, })
     asset: Asset;
 
@@ -25,14 +24,16 @@ export class Job {
     @CreateDateColumn({ type: 'timestamp', comment: "วันที่สร้าง" })
     datecreate: Date;
 
-    @Column({ default: 1, comment: "1. ยังไม่รับงาน, 2. กำลังปฎิบัติ, 3. เสร็จ, 4. ยกเลิก" })
-    status: number;
+    // join jobstatus
+    @ManyToOne(() => JobStatus, jobstatus => jobstatus.job, { nullable: false })
+    status: JobStatus;
 
     @Column({ type: 'timestamp', default: null, comment: "วันที่รับงาน" })
     accept_date: Date;
 
-    @Column({ default: null, comment: "1. รับซ่อม, 2. ส่งซ่อมภายนอก" })
-    accept_status: number;
+    // join job accept status
+    @ManyToOne(() => JobAcceptStatus, jobacceptstatus => jobacceptstatus.job)
+    accept_status: JobAcceptStatus;
 
     @Column({ default: null, comment: "id ผู้รับงาน", type: 'bigint' })
     accept_staff_employee_id: number;
@@ -40,8 +41,9 @@ export class Job {
     @Column({ type: 'timestamp', default: null, comment: "วันที่ปิดงาน" })
     done_date: Date;
 
-    @Column({ default: null, comment: "1. ใช้งานได้, 2. ใช้งานไม่ได้" })
-    done_status: number;
+    // join job done status
+    @ManyToOne(() => JobDoneStatus, jobdonestatus => jobdonestatus.job)
+    done_status: JobDoneStatus;
 
     @Column({ default: null, comment: "รายระเอียดการซ่อม" })
     done_staff_detail: string;
@@ -49,8 +51,9 @@ export class Job {
     @Column({ default: null, comment: "id ผู้ verify", type: 'bigint' })
     verify_user_employee_id: number;
 
-    @Column({ default: null, comment: "ระดับความพอใจ", type: 'tinyint' })
-    verify_is_acceptable: number;
+    // join verify status
+    @ManyToOne(() => JobVerifyStatus, jobverifystatus => jobverifystatus.job)
+    verify_acceptable: number;
 
     @Column({ default: null, comment: "วันที่ Verify", type: "timestamp" })
     verify_date: Date;
@@ -61,14 +64,5 @@ export class Job {
     @Column({ default: null, comment: "id ผู้ยกเลิกงาน", type: 'bigint' })
     cancel_staff_employee_id: number
 
-<<<<<<< Updated upstream
-
-=======
-    @ManyToOne(() => JobAcceptable, verify_acceptable => verify_acceptable.job, { nullable: true, })
-    verify_acceptable: number
-
-    @Column({ default: null, comment: "วันที่ verify" })
-    verify_date: Date
->>>>>>> Stashed changes
 
 }

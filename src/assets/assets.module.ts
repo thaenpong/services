@@ -5,7 +5,7 @@ import { Asset } from './entities/asset.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Category } from 'src/categories/entities/category.entity';
 import { Job } from 'src/jobs/entities/job.entity';
-import { AssetStatus } from 'src/status/entities/asset-status.entity';
+import { AssetStatus } from 'src/status/entities/asset-status.entyty';
 
 @Module({
   //import entity

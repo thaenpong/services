@@ -1,7 +1,7 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Category } from "src/categories/entities/category.entity";
 import { Job } from "src/jobs/entities/job.entity";
-import { AssetStatus } from "src/status/entities/asset-status.entity";
+import { AssetStatus } from "src/status/entities/asset-status.entyty";
 @Entity()
 export class Asset {
     @PrimaryGeneratedColumn()
@@ -10,6 +10,7 @@ export class Asset {
     /*  @Column({ nullable: false, comment: "id หมวดหมู่" })
      categories_id: number */
 
+    //join category
     @ManyToOne(() => Category, category => category.assets, { nullable: false, })
     category: Category;
 
@@ -37,8 +38,9 @@ export class Asset {
     @Column({ default: null, comment: "หมายเหตุ" })
     note: string
 
+    // join asset status
     @ManyToOne(() => AssetStatus, status => status.asset, { nullable: false, })
-    status: Category;
+    status: AssetStatus;
 
     @CreateDateColumn({ type: 'timestamp', comment: "วันที่ลงทะเบียน" })
     datecreate: Date

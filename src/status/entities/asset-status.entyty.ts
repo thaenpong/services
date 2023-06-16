@@ -1,10 +1,8 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Asset } from "src/assets/entities/asset.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class AssetStatus {
-    //สถานะงาน
-
     @PrimaryGeneratedColumn()
     id: number;
 

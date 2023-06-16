@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Not, Equal } from 'typeorm';
 import { Asset } from './entities/asset.entity';
 import { Category } from 'src/categories/entities/category.entity';
-import { AssetStatus } from 'src/status/entities/asset-status.entity';
+import { AssetStatus } from 'src/status/entities/asset-status.entyty';
 
 @Injectable()
 export class AssetsService {
