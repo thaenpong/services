@@ -10,6 +10,7 @@ import { Category } from './categories/entities/category.entity';
 import { JobsModule } from './jobs/jobs.module';
 import { Job } from './jobs/entities/job.entity';
 import { StatusModule } from './status/status.module';
+import { RemovedModule } from './removed/removed.module';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -22,7 +23,7 @@ import { StatusModule } from './status/status.module';
     database: 'services',
     autoLoadEntities: true,
     synchronize: true,
-  }), AssetsModule, CategoriesModule, JobsModule, StatusModule,],
+  }), AssetsModule, CategoriesModule, JobsModule, StatusModule, RemovedModule,],
   controllers: [AppController],
   providers: [AppService],
 })

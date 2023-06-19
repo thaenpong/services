@@ -43,16 +43,10 @@ export class Asset {
     status: AssetStatus;
 
     @CreateDateColumn({ type: 'timestamp', comment: "วันที่ลงทะเบียน" })
-    datecreate: Date
+    datecreate: Date;
 
     @Column({ nullable: false, comment: "id ผู้ลงทะเบียน", type: 'bigint' })
-    staff_employee_id: number
-
-    @Column({ type: 'timestamp', default: null, comment: "วันที่ถอดถอน" })
-    dateremoved: Date
-
-    @Column({ default: null, comment: "id ผู้ถอดถอน", type: 'bigint' })
-    staff_employee_id_remove: number
+    staff_employee_id: number;
 
     @Column({ nullable: true, default: null, comment: "วันหมดประกัน" })
     warranty_expires: Date

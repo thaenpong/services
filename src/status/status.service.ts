@@ -6,6 +6,7 @@ import { JobStatus } from './entities/job-status.entity';
 import { AssetStatus } from 'src/status/entities/asset-status.entyty';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { RemoveStatus } from './entities/remove-status.entity';
 
 @Injectable()
 export class StatusService {
@@ -27,6 +28,9 @@ export class StatusService {
         @InjectRepository(JobVerifyStatus)
         private JobAcceptAbleRespository: Repository<JobVerifyStatus>,
 
+        @InjectRepository(RemoveStatus)
+        private RemoveStatusRepository: Repository<RemoveStatus>,
+
     ) { }
 
     async job_status() {
@@ -46,5 +50,9 @@ export class StatusService {
 
     async asset() {
         return await this.AssetStatusRespository.find();
+    }
+
+    async removed() {
+        return await this.RemoveStatusRepository.find();
     }
 }

@@ -48,4 +48,12 @@ export class StatusController {
   asset() {
     return this.statusService.asset();
   }
+
+  @Get('removed')
+  @ApiOkResponse({ description: "สถานะการถอดถอน" })
+  @ApiBadRequestResponse({ description: "ไม่มารถค้นหาข้อมูลได้" })
+  @ApiTags('status')
+  removed() {
+    return this.statusService.removed();
+  }
 }
