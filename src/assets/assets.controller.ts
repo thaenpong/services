@@ -39,6 +39,19 @@ export class AssetsController {
     return this.assetsService.update(+id, updateAssetDto);
   }
 
+  @Get('category/:id')
+  @ApiTags("asset")
+  findcategory(@Param('id') id: string) {
+    return this.assetsService.findcategory(+id);
+  }
+
+  @Get('status/:id')
+  @ApiTags("asset")
+  status(@Param('id') id: string) {
+    return this.assetsService.status(+id);
+  }
+
+
   /*   @Delete(':id')
     remove(@Param('id') id: string) {
       return this.assetsService.remove(+id);

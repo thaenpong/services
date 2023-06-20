@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Job } from './entities/job.entity';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { Asset } from 'src/assets/entities/asset.entity';
 import { JobStatus } from 'src/status/entities/job-status.entity';
 import { JobAcceptStatus } from 'src/status/entities/job-accept-status.entity';
@@ -54,7 +54,7 @@ export class JobsService {
   async create(createJobDto) {
     try {
       //เช็ค id ทรัพย์สิน
-      const asset = await this.AssetsRespository.findOne({ where: { id: createJobDto.asset_id } });
+      const asset = await this.AssetsRespository.findOne({ where: { id: createJobDto.asset_id, status: Not(3) } });
       // ไม่มี
       if (!asset) { throw new Error("Asset ID not found in the database"); }
 

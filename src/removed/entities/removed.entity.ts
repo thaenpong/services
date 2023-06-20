@@ -7,7 +7,7 @@ export class Removed {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @OneToOne(() => Asset)
+    @OneToOne(() => Asset, asset => asset.removed)
     @JoinColumn()
     asset: Asset;
 

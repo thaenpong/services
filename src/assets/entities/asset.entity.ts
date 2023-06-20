@@ -1,7 +1,8 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Category } from "src/categories/entities/category.entity";
 import { Job } from "src/jobs/entities/job.entity";
 import { AssetStatus } from "src/status/entities/asset-status.entyty";
+import { Removed } from "src/removed/entities/removed.entity";
 @Entity()
 export class Asset {
     @PrimaryGeneratedColumn()
@@ -32,12 +33,14 @@ export class Asset {
     @Column({ default: null, comment: "สี" })
     color: string
 
-    @Column({ nullable: true, comment: "id ผู้ใช้", type: 'bigint' })
+    @Column({ default: null, comment: "id ผู้ใช้", type: 'bigint' })
     user_employee_id: number
 
     @Column({ default: null, comment: "หมายเหตุ" })
     note: string
 
+    @Column({ default: null, comment: "หมายเหตุ" })
+    description: string
     // join asset status
     @ManyToOne(() => AssetStatus, status => status.asset, { nullable: false, })
     status: AssetStatus;
@@ -53,4 +56,8 @@ export class Asset {
 
     @OneToMany(() => Job, job => job.asset)
     job: Job[];
+
+    @OneToOne(() => Removed, removed => removed.asset)
+    @JoinColumn()
+    removed: Removed;
 }

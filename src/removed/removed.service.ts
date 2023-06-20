@@ -8,6 +8,8 @@ import { Asset } from 'src/assets/entities/asset.entity';
 import { AssetStatus } from 'src/status/entities/asset-status.entyty';
 import { RemoveStatus } from 'src/status/entities/remove-status.entity';
 
+
+
 @Injectable()
 export class RemovedService {
 
@@ -33,11 +35,12 @@ export class RemovedService {
     return ['asset', 'status']
   }
 
+
   //อัพเดทสถานะของทรัพย์สิน
-  private async assetstatus(status_id, asset_id: number) {
-    const status = await this.AssetStatusRespository.findOne({ where: { id: 3 } });
-    console.log(status)
-    await this.AssetsRespository.update(asset_id, { status: status });
+  private async assetstatus(status_id: number, asset_id: number, res: any) {
+    const status = await this.AssetStatusRespository.findOne({ where: { id: status_id } });
+
+    await this.AssetsRespository.update(asset_id, { status: status, user_employee_id: null, description: "ถอดถอนแล้ว", removed: res });
   }
 
   //------------------------------------------------------------------------------------------------------- insert
@@ -52,6 +55,8 @@ export class RemovedService {
       // เปลี่ยน asset_id เป็น asset
       delete createRemovedDto.asset_id;
       createRemovedDto.asset = asset;
+
+
 
       // บันทึกข้อมูลสถานะ
       createRemovedDto.status = await this.RemoveStatusRepository.findOne({ where: { id: 1 } })
@@ -141,13 +146,15 @@ export class RemovedService {
       //บันทึกข้อมูลสถานะ
       updateRemovedDto.status = await this.RemoveStatusRepository.findOne({ where: { id: 2 } })
       //console.log(removed.asset.id)
-      //อัพเดทสถานะทรัพย์สิน
-      await this.assetstatus(+3, removed.asset.id)
 
-
+      //update
       await this.RemovedRespository.update(id, updateRemovedDto);
       // ดึงข้อมูล
       const res = await this.RemovedRespository.findOne({ where: { id: id }, relations: this.relations() })
+
+      //อัพเดทสถานะทรัพย์สิน
+      await this.assetstatus(+3, removed.asset.id, res)
+
       return { 'message': 'success', 'data': res };
 
     } catch (error) {

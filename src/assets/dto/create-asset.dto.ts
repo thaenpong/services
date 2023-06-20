@@ -39,14 +39,18 @@ export class CreateAssetDto {
     color: string
 
     @IsNumber()
-    @IsNotEmpty()
     @ApiProperty({ description: "id ผู้ใช้", example: "9165061501" })
     user_employee_id: number
 
     @IsString()
     @IsNotEmpty()
-    @ApiProperty({ description: "หมายเหตุ", example: "ไม่ติดแท็ก" })
+    @ApiProperty({ description: "หมายเหตุ", example: "สำรอง IT" })
     note: string
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty({ description: "หมายเหตุ", example: "ไม่ติดแท็ก" })
+    description: string
 
     @IsNotEmpty()
     @IsNumber()

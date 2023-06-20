@@ -7,6 +7,9 @@ import { Asset } from './entities/asset.entity';
 import { Category } from 'src/categories/entities/category.entity';
 import { AssetStatus } from 'src/status/entities/asset-status.entyty';
 
+
+const relations = ['category', 'status', 'removed'];
+
 @Injectable()
 export class AssetsService {
   //import entity
@@ -44,7 +47,7 @@ export class AssetsService {
       createAssetDto.category = category;
       // insert
       const insert = await this.AssetsRespository.save(createAssetDto);
-      const res = this.AssetsRespository.findOne({ where: { id: insert.id }, relations: ['category', 'status'] })
+      const res = this.AssetsRespository.findOne({ where: { id: insert.id }, relations: relations })
       return { 'message': 'success', 'data': insert };
 
     } catch (error) {
@@ -66,7 +69,7 @@ export class AssetsService {
       //เรียกข้อมูลทั้งหมดที่ status != 3
       const res = await this.AssetsRespository.find({
         where: { status: Not(3) },
-        relations: ['category', 'status'],
+        relations: relations,
       });
       return { 'message': 'success', 'data': res };
     } catch (error) {
@@ -84,7 +87,7 @@ export class AssetsService {
   async findOne(id: number) {
     try {
       //เรียกข้อมูล
-      const res = await this.AssetsRespository.findOne({ where: { id: id }, relations: ['category', 'status'], });
+      const res = await this.AssetsRespository.findOne({ where: { id: id }, relations: relations, });
       return { 'message': 'success', 'data': res }
     } catch (error) {
       // return error
@@ -115,7 +118,7 @@ export class AssetsService {
         // update
         const update = await this.AssetsRespository.update(id, updateAssetDto);
         // เรียกข้อมูล
-        const res = await this.AssetsRespository.findOne({ where: { id: id }, relations: ['category', 'status'] })
+        const res = await this.AssetsRespository.findOne({ where: { id: id }, relations: relations })
         // return
         return { 'message': 'success', 'data': res };
       }
@@ -131,7 +134,45 @@ export class AssetsService {
     }
   }
 
+  async findcategory(id: any) {
+    try {
+      const category = await this.CategoriesRespository.findOne({ where: { id: id } });
+      if (!category) {
+        throw new Error("Category ID not found in the database");
+      }
+      const res = await this.AssetsRespository.find({ where: { category: category, status: Not(3) }, relations: relations });
+      return { 'message': 'success', 'data': res };
+    } catch (error) {
+      // return error
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: error.message,
+        },
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
 
+  async status(id: any) {
+    try {
+      const status = await this.AssetStatussRespository.findOne({ where: { id: id } });
+      if (!status) {
+        throw new Error("Status ID not found in the database");
+      }
+      const res = await this.AssetsRespository.find({ where: { status: status }, relations: relations });
+      return { 'message': 'success', 'data': res };
+    } catch (error) {
+      // return error
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: error.message,
+        },
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
   /* 
     remove(id: number) {
       return `This action removes a #${id} asset`;
