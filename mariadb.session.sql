@@ -1,1 +1,0 @@
-INSERT INTO `job_verify_status` (`id`, `name`,`value`) VALUES (NULL, 'พอใช้',0), (NULL, 'ดี',1);
