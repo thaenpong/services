@@ -3,6 +3,7 @@ import { Category } from "src/categories/entities/category.entity";
 import { Job } from "src/jobs/entities/job.entity";
 import { AssetStatus } from "src/status/entities/asset-status.entyty";
 import { Removed } from "src/removed/entities/removed.entity";
+import { Uselogs } from "./use-logs.entity";
 @Entity()
 export class Asset {
     @PrimaryGeneratedColumn()
@@ -60,4 +61,7 @@ export class Asset {
     @OneToOne(() => Removed, removed => removed.asset)
     @JoinColumn()
     removed: Removed;
+
+    @OneToMany(() => Uselogs, uselogs => uselogs.asset)
+    uselog: Uselogs[];
 }

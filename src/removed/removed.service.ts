@@ -7,6 +7,7 @@ import { Not, Repository } from 'typeorm';
 import { Asset } from 'src/assets/entities/asset.entity';
 import { AssetStatus } from 'src/status/entities/asset-status.entyty';
 import { RemoveStatus } from 'src/status/entities/remove-status.entity';
+import { Uselogs } from 'src/assets/entities/use-logs.entity';
 
 
 
@@ -26,6 +27,8 @@ export class RemovedService {
     @InjectRepository(RemoveStatus)
     private RemoveStatusRepository: Repository<RemoveStatus>,
 
+    @InjectRepository(Uselogs)
+    private UseLogsRespository: Repository<Uselogs>,
 
   ) {
 
@@ -150,11 +153,13 @@ export class RemovedService {
       //update
       await this.RemovedRespository.update(id, updateRemovedDto);
       // ดึงข้อมูล
-      const res = await this.RemovedRespository.findOne({ where: { id: id }, relations: this.relations() })
+      const res = await this.RemovedRespository.findOne({ where: { id: id }, relations: this.relations() });
 
       //อัพเดทสถานะทรัพย์สิน
-      await this.assetstatus(+3, removed.asset.id, res)
+      await this.assetstatus(+3, removed.asset.id, res);
 
+      const uselogs = await this.UseLogsRespository.findOne({ relations: ['asset'], where: { asset: { id: removed.asset.id } }, order: { id: 'desc' } });
+      await this.UseLogsRespository.update(uselogs.id, { todate: new Date, to_staff_employee_id: res.staff_employee_id });
       return { 'message': 'success', 'data': res };
 
     } catch (error) {
@@ -196,4 +201,6 @@ export class RemovedService {
       );
     }
   }
+
+
 }

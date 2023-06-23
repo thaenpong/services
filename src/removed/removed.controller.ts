@@ -58,4 +58,5 @@ export class RemovedController {
   remove(@Param('id') id: string) {
     return this.removedService.remove(+id);
   }
+
 }

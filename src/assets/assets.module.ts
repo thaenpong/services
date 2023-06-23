@@ -6,10 +6,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Category } from 'src/categories/entities/category.entity';
 import { Job } from 'src/jobs/entities/job.entity';
 import { AssetStatus } from 'src/status/entities/asset-status.entyty';
+import { Uselogs } from './entities/use-logs.entity';
 
 @Module({
   //import entity
-  imports: [TypeOrmModule.forFeature([Asset, Category, Job, AssetStatus])],
+  imports: [TypeOrmModule.forFeature([Asset, Category, Job, AssetStatus, Uselogs])],
 
   controllers: [AssetsController],
   providers: [AssetsService]
