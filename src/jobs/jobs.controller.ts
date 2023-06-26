@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, Validation
 import { JobsService } from './jobs.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { AcceptJobDto } from './dto/accept-job.dto';
-import { ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { DoneJobDto } from './dto/done-job.dto';
 import { CancelJobDto } from './dto/cancel-job.dto';
 import { VerifyJobDto } from './dto/verify-job.dto';
@@ -21,6 +21,7 @@ export class JobsController {
   }
 
   @Get('status/:status')
+  @ApiParam({ name: 'status', description: 'ID สถานะ', example: 1 })
   @ApiOkResponse({ description: "รายการแจ้งซ่อมตามสถานะงาน 1.ยังไม่รับงาน 2. กำลังปฎิบัติ 3.เสร็จ 4.ยกเลิก" })
   @ApiBadRequestResponse({ description: "ไม่มารถค้นหาข้อมูลได้ / สถานะไม่ถูกต้อง" })
   @ApiTags('job')
@@ -29,6 +30,7 @@ export class JobsController {
   }
 
   @Get(':id')
+  @ApiParam({ name: 'id', description: 'ID งาน', example: 1 })
   @ApiOkResponse({ description: "แสดงรายระเอียดงาน" })
   @ApiBadRequestResponse({ description: "ไม่มารถค้นหาข้อมูลได้" })
   @ApiTags('job')
@@ -40,6 +42,7 @@ export class JobsController {
   @Patch('accept/:id')
   @ApiTags('job')
   @UsePipes(ValidationPipe)
+  @ApiParam({ name: 'id', description: 'ID งาน', example: 1 })
   @ApiOkResponse({ description: "บันทึกข้อมูลพนักงานที่รับงาน" })
   @ApiBadRequestResponse({ description: "ไม่มารถอัพเดทข้อมูลได้/ รับงานไปแล้ว " })
   accept(@Param('id') id: number, @Body() acceptJobDto: AcceptJobDto) {
@@ -49,6 +52,7 @@ export class JobsController {
   @Patch('done/:id')
   @UsePipes(ValidationPipe)
   @ApiTags('job')
+  @ApiParam({ name: 'id', description: 'ID งาน', example: 1 })
   @ApiOkResponse({ description: "บันทึกข้อมูล / ปิดงาน" })
   @ApiBadRequestResponse({ description: "ไม่มารถอัพเดทข้อมูลได้/ งานปิดไปแล้ว " })
   done(@Param('id') id: number, @Body() doneJobDto: DoneJobDto) {
@@ -58,6 +62,7 @@ export class JobsController {
   @Patch('cancel/:id')
   @UsePipes(ValidationPipe)
   @ApiTags('job')
+  @ApiParam({ name: 'id', description: 'ID งาน', example: 1 })
   @ApiOkResponse({ description: "ยกเลิกงานซ่อม" })
   @ApiBadRequestResponse({ description: "ไม่มารถอัพเดทข้อมูลได้" })
   cancel(@Param('id') id: number, @Body() cancelJobDto: CancelJobDto) {
@@ -67,6 +72,7 @@ export class JobsController {
   @Patch('verify/:id')
   @UsePipes(ValidationPipe)
   @ApiTags('job')
+  @ApiParam({ name: 'id', description: 'ID งาน', example: 1 })
   @ApiOkResponse({ description: "ประเมินงานซ่อม" })
   @ApiBadRequestResponse({ description: "ข้อมูลไม่ถูกต้อง" })
   verify(@Param('id') id: number, @Body() verifyJobDto: VerifyJobDto) {

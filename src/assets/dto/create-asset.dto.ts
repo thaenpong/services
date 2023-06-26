@@ -38,7 +38,6 @@ export class CreateAssetDto {
     @ApiProperty({ description: "สีอุปกรณ์", example: "เทา" })
     color: string
 
-    @IsNumber()
     @ApiProperty({ description: "id ผู้ใช้", example: "9165061501" })
     user_employee_id: number
 

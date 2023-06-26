@@ -3,14 +3,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AssetsModule } from './assets/assets.module';
-import { Asset } from './assets/entities/asset.entity';
 import { DataSource } from 'typeorm';
 import { CategoriesModule } from './categories/categories.module';
-import { Category } from './categories/entities/category.entity';
 import { JobsModule } from './jobs/jobs.module';
-import { Job } from './jobs/entities/job.entity';
 import { StatusModule } from './status/status.module';
 import { RemovedModule } from './removed/removed.module';
+import { HistoriesModule } from './histories/histories.module';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -23,7 +21,7 @@ import { RemovedModule } from './removed/removed.module';
     database: 'services',
     autoLoadEntities: true,
     synchronize: true,
-  }), AssetsModule, CategoriesModule, JobsModule, StatusModule, RemovedModule,],
+  }), AssetsModule, CategoriesModule, JobsModule, StatusModule, RemovedModule, HistoriesModule,],
   controllers: [AppController],
   providers: [AppService],
 })

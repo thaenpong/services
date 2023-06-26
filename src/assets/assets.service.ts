@@ -2,11 +2,12 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateAssetDto } from './dto/create-asset.dto';
 import { UpdateAssetDto } from './dto/update-asset.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Not, Equal } from 'typeorm';
+import { Repository, Not, Equal, IsNull } from 'typeorm';
 import { Asset } from './entities/asset.entity';
 import { Category } from 'src/categories/entities/category.entity';
 import { AssetStatus } from 'src/status/entities/asset-status.entyty';
 import { Uselogs } from './entities/use-logs.entity';
+import { SwitchAssetDto } from './dto/switch-asset.dto';
 
 
 const relations = ['category', 'status', 'removed'];
@@ -28,8 +29,55 @@ export class AssetsService {
     private UseLogsRespository: Repository<Uselogs>,
   ) { }
 
+  async closelog(id_asset: number, staff_employee_id: number, user_employee_id: number, detail: string) {
+
+    //ค้นหา Asset ใน table logs
+    const uselogs = await this.UseLogsRespository.findOne({ relations: ['asset'], where: { asset: { id: id_asset }, todate: IsNull() }, order: { id: 'desc' } });
+
+    //----------------มีข้อมูล
+    if (uselogs) {
+      //------------------ employee id ไม่เหมือนกัน
+      console.log(uselogs)
+      if (uselogs.user_employee_id != user_employee_id) {
+        //ปิด log
+        const cdata = {
+          todate: new Date,
+          to_staff_employee_id: staff_employee_id,
+          detail: detail
+        }
+        //------------- บันทึก
+        await this.UseLogsRespository.update(uselogs.id, cdata);
+
+        if (user_employee_id != null) {
+          //สร้าง log row ใหม่
+          const odata = {
+            asset: { id: id_asset },
+            from_staff_employee_id: staff_employee_id,
+            user_employee_id: user_employee_id
+          }
+          await this.UseLogsRespository.save(odata);
+        }
+      }
+    } else {
+      console.log(user_employee_id)
+      if (user_employee_id != null) {
+        console.log(id_asset);
+        //สร้าง log row ใหม่
+        const data = {
+          asset: { id: id_asset },
+          from_staff_employee_id: staff_employee_id,
+          user_employee_id: user_employee_id,
+        }
+
+        await this.UseLogsRespository.save(data);
+      }
+    }
+  }
+
+
   //-------------------------------------------------------------------------------บันทึกข้อมูล
   async create(createAssetDto) {
+
     try {
       //เปลี่ยนให้เป็นตัวใหญ่
       createAssetDto.code = createAssetDto.code.toUpperCase();
@@ -39,16 +87,18 @@ export class AssetsService {
         throw new Error("Category ID not found in the database")
       }
 
-      // ดึงข้อมูลสถานะ
-      const status = await this.AssetStatussRespository.findOne({ where: { id: 1 } })
+
       //บันทึกลงตัวแปล
-      createAssetDto.status = status;
+      createAssetDto.status = { id: 1 };
 
-
+      console.log("here");
       //ลบ categories_id
+      const categories_id = createAssetDto.categories_id;
       delete createAssetDto.categories_id;
       // บันทึกข้อมูล
-      createAssetDto.category = category;
+      createAssetDto.category = { id: categories_id };
+
+      console.log(createAssetDto);
       // insert
       const insert = await this.AssetsRespository.save(createAssetDto);
 
@@ -57,12 +107,16 @@ export class AssetsService {
         asset: insert,
         from_staff_employee_id: insert.staff_employee_id,
       }
-      await this.UseLogsRespository.save(data);
+
+
+      //ดึงข้อมูล
+      const res = await this.AssetsRespository.findOne({ where: { id: insert.id }, relations: relations })
+
+      //---------------บันทึก log
+      await this.closelog(res.id, res.staff_employee_id, res.user_employee_id, null);
 
       //return
-      const res = this.AssetsRespository.findOne({ where: { id: insert.id }, relations: relations })
       return { 'message': 'success', 'data': insert };
-
     } catch (error) {
       // return error
       throw new HttpException(
@@ -141,20 +195,23 @@ export class AssetsService {
 
         // เรียกข้อมูล
         const res = await this.AssetsRespository.findOne({ where: { id: id }, relations: relations });
-        //
-        console.log(asset)
+
+        //ค้นหา Asset ใน table logs
         const uselogs = await this.UseLogsRespository.findOne({ relations: ['asset'], where: { asset: { id: res.id }, todate: null }, order: { id: 'desc' } });
 
+        //----------------มีข้อมูล
         if (uselogs) {
+          //------------------ employee id ไม่เหมือนกัน
           if (asset.user_employee_id != updateAssetDto.user_employee_id) {
             //ปิด log
             const cdata = {
               todate: new Date,
               to_staff_employee_id: to_staff_employee_id,
             }
+            //------------- บันทึก
             await this.UseLogsRespository.update(uselogs.id, cdata);
 
-            //บันทึกใบประวัติ
+            //สร้าง log row ใหม่
             const odata = {
               asset: res,
               from_staff_employee_id: from_staff_employee_id,
@@ -163,7 +220,7 @@ export class AssetsService {
             await this.UseLogsRespository.save(odata);
           }
         } else {
-          //บันทึกใบประวัติ
+          //สร้าง log row ใหม่
           const data = {
             asset: res,
             from_staff_employee_id: from_staff_employee_id,
@@ -187,6 +244,7 @@ export class AssetsService {
     }
   }
 
+  //----------------------------------------------------------------- ค้นหาตาม category
   async findcategory(id: any) {
     try {
       const category = await this.CategoriesRespository.findOne({ where: { id: id } });
@@ -207,6 +265,7 @@ export class AssetsService {
     }
   }
 
+  //------------------------------------------------------------------------ หาตาม สถานะ
   async status(id: any) {
     try {
       const status = await this.AssetStatussRespository.findOne({ where: { id: id } });
@@ -227,21 +286,24 @@ export class AssetsService {
     }
   }
 
-  async getlogs(id: number) {
-    try {
-      const res = await this.UseLogsRespository.find({ where: { asset: { id: id } } });
-      return { 'message': 'success', 'data': res };
-    } catch (error) {
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.BAD_REQUEST,
-          message: error.message,
-        },
-        HttpStatus.BAD_REQUEST
-      );
-    }
-  }
+  //---------------------------------------------------------- ค้นหา logs
+  /*  async getlogs(id: number) {
+     try {
+       //---------------------------- ค้นหา
+       const res = await this.UseLogsRespository.find({ where: { asset: { id: id } } });
+       return { 'message': 'success', 'data': res };
+     } catch (error) {
+       throw new HttpException(
+         {
+           statusCode: HttpStatus.BAD_REQUEST,
+           message: error.message,
+         },
+         HttpStatus.BAD_REQUEST
+       );
+     }
+   } */
 
+  //---------------------------------------------------------- ค้นหาตามรหัสผู้ใช้
   async getempid(user_employee_id: number) {
     try {
       const res = await this.AssetsRespository.find({ where: { user_employee_id: user_employee_id, status: Not(3) } });
@@ -258,21 +320,34 @@ export class AssetsService {
     }
   }
 
-  async switch(from_id: number, to_id: number) {
+  //--------------------------------------------------------------------------------------------------------------------------------- เปลี่ยน ทรัพย์สิน
+  async switch(switchassetdto: SwitchAssetDto) {
     try {
-      const from_asset = await this.AssetsRespository.findOne({ where: { id: from_id } });
-      const to_asset = await this.AssetsRespository.findOne({ where: { id: to_id } });
+      //-------------------------------- ดึงข้อมูล
+      const from_asset = await this.AssetsRespository.findOne({ where: { id: switchassetdto.from_id, status: Not(3) } });
+      const to_asset = await this.AssetsRespository.findOne({ where: { id: switchassetdto.to_id, status: Not(3) } });
+      //-------------------------------  เช็คข้อมูล
       if (!from_asset) {
         throw new Error("The 'from_asset' ID was not found in the database.");
       }
-
       if (!to_asset) {
         throw new Error("The 'to_asset' ID was not found in the database.");
       }
+
+      //--------------------------------- บันทึก to_asset ไปที่  from_asset
       await this.AssetsRespository.update(from_asset.id, { user_employee_id: to_asset.user_employee_id, note: to_asset.note });
+      //--------------------------------- บันทึก from_asset ไปที่  to_asset
       await this.AssetsRespository.update(to_asset.id, { user_employee_id: from_asset.user_employee_id, note: from_asset.note });
-      return { 'message': 'success' };
+
+      //--------------------------------- โหลดข้อมูล to_asset ที่อัพเดทแล้ว
+      const res = await this.AssetsRespository.findOne({ where: { id: to_asset.id }, relations: relations });
+
+      await this.closelog(from_asset.id, switchassetdto.staff_employee_id, to_asset.user_employee_id, switchassetdto.detail);
+      await this.closelog(to_asset.id, switchassetdto.staff_employee_id, from_asset.user_employee_id, switchassetdto.detail);
+      //--------------------------------- return
+      return { 'message': 'success', 'data': res };
     } catch (error) {
+      //---------------------- return error massage
       throw new HttpException(
         {
           statusCode: HttpStatus.BAD_REQUEST,
@@ -282,6 +357,26 @@ export class AssetsService {
         HttpStatus.BAD_REQUEST
       );
     }
-
   }
+
+  //------------------------------ บันทึก log เริ่มต้น
+  /*  async makelog() {
+     const assets = await this.AssetsRespository.find({ where: { status: { id: 1 } } });
+     if (assets) {
+ 
+       let items = []
+       for (const asset of assets) {
+         await this.closelog(asset.id, asset.staff_employee_id, asset.user_employee_id,null);
+         items.push(asset.id);
+       };
+       return items;
+     }
+ 
+ 
+ 
+   } */
+
+
+
 }
+

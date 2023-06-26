@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, UseP
 import { RemovedService } from './removed.service';
 import { CreateRemovedDto } from './dto/create-removed.dto';
 import { UpdateRemovedDto } from './dto/update-removed.dto';
-import { ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 
 @Controller('removed')
 export class RemovedController {
@@ -26,6 +26,7 @@ export class RemovedController {
   }
 
   @Get('/status/:id')
+  @ApiParam({ name: 'id', description: 'ID การถอดถอน', example: 1 })
   @ApiOkResponse({ description: "รายการแจ้งถอดถอน" })
   @ApiBadRequestResponse({ description: "ไม่มารถค้นหาข้อมูลได้ / สถานะไม่ถูกต้อง" })
   @ApiTags('remove')
@@ -34,6 +35,7 @@ export class RemovedController {
   }
 
   @Get(':id')
+  @ApiParam({ name: 'id', description: 'ID การถอดถอน', example: 1 })
   @ApiOkResponse({ description: "แสดงรายระเอียด" })
   @ApiBadRequestResponse({ description: "ไม่มารถค้นหาข้อมูลได้" })
   @ApiTags('remove')
@@ -43,6 +45,7 @@ export class RemovedController {
 
   @Patch(':id')
   @ApiTags('remove')
+  @ApiParam({ name: 'id', description: 'ID การถอดถอน', example: 1 })
   @UsePipes(ValidationPipe)
   @ApiOkResponse({ description: "อนุมัติการถอดถอน" })
   @ApiBadRequestResponse({ description: "ไม่มารถอัพเดทข้อมูลได้/ รับงานไปแล้ว " })
@@ -52,6 +55,7 @@ export class RemovedController {
   }
 
   @Delete(':id')
+  @ApiParam({ name: 'id', description: 'ID การถอดถอน', example: 1 })
   @ApiOkResponse({ description: "ลบข้อมูล" })
   @ApiBadRequestResponse({ description: "ไม่สามารถลบข้อมูลได้" })
   @ApiTags('remove')

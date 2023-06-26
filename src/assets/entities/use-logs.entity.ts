@@ -21,6 +21,9 @@ export class Uselogs {
     @Column({ type: 'bigint', default: null })
     to_staff_employee_id: number;
 
+    @Column({ default: null })
+    detail: string;
+
     @ManyToOne(() => Asset, asset => asset.uselog)
     asset: Asset
 }

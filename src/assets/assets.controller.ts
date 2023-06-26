@@ -2,12 +2,19 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, Validation
 import { AssetsService } from './assets.service';
 import { CreateAssetDto } from './dto/create-asset.dto';
 import { UpdateAssetDto } from './dto/update-asset.dto';
-import { ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { get } from 'http';
+import { SwitchAssetDto } from './dto/switch-asset.dto';
 
 @Controller('assets')
 export class AssetsController {
   constructor(private readonly assetsService: AssetsService) { }
+
+
+  /* @Get('makelog/')
+  makelog() {
+    return this.assetsService.makelog();
+  } */
 
   @Post()
   @UsePipes(ValidationPipe)
@@ -27,11 +34,13 @@ export class AssetsController {
 
   @Get(':id')
   @ApiTags("asset")
+  @ApiParam({ name: 'id', description: "ID ทรัพย์สิน", example: 77 })
   findOne(@Param('id') id: string) {
     return this.assetsService.findOne(+id);
   }
 
   @Patch(':id')
+  @ApiParam({ name: 'id', description: "ID ทรัพย์สิน", example: 77 })
   @UsePipes(ValidationPipe)
   @ApiCreatedResponse({ description: "อัพเดทข้อมูล ทรัพย์สินที่ลงทะเบียน" })
   @ApiBadRequestResponse({ description: "ไม่สามารถบันทึกข้อมูลได้" })
@@ -42,41 +51,45 @@ export class AssetsController {
 
   @Get('category/:id')
   @ApiTags("asset")
+  @ApiParam({ name: 'id', description: "ID หมวดหมู่", example: 4 })
   findcategory(@Param('id') id: string) {
     return this.assetsService.findcategory(+id);
   }
 
   @Get('status/:id')
   @ApiTags("asset")
+  @ApiParam({ name: 'id', description: "ID สถานะ", example: 1 })
   status(@Param('id') id: string) {
     return this.assetsService.status(+id);
   }
 
-  @Get('logs/:asset_id')
-  @ApiOkResponse({ description: "รายการประวัติการใช้งาน" })
-  @ApiBadRequestResponse({ description: "ไม่มารถค้นหาข้อมูลได้ / สถานะไม่ถูกต้อง" })
-  @ApiTags('logs')
-  getlogs(@Param('asset_id') id: number) {
-    return this.assetsService.getlogs(+id);
-  }
+  /*  @Get('asset_logs/:asset_id')
+   @ApiOkResponse({ description: "รายการประวัติการใช้งาน" })
+   @ApiBadRequestResponse({ description: "ไม่มารถค้นหาข้อมูลได้ / สถานะไม่ถูกต้อง" })
+   @ApiTags('logs')
+   getlogs(@Param('asset_id') id: number) {
+     return this.assetsService.getlogs(+id);
+   } */
+
 
   @Get('employee/:employee_id')
-  @ApiOkResponse({ description: "รายการประวัติการใช้งาน" })
+  @ApiParam({ name: 'employee_id', description: "รหัสพนักงาน", example: 9165082901 })
+  @ApiOkResponse({ description: "รายการ asset ตามรหัสพนักงาน" })
   @ApiBadRequestResponse({ description: "ไม่มารถค้นหาข้อมูลได้ / สถานะไม่ถูกต้อง" })
   @ApiTags('asset')
   getemployee(@Param('employee_id') id: number) {
     return this.assetsService.getempid(+id);
   }
 
-  @Get('switch/')
-  @ApiQuery({ name: 'from_id', example: 7, required: true })
-  @ApiQuery({ name: 'to_id', example: 403, required: true })
-  @ApiCreatedResponse({ description: "อัพเดทข้อมูล ทรัพย์สินที่ลงทะเบียน" })
+  @Post('switch/')
+  @UsePipes(ValidationPipe)
+  @ApiCreatedResponse({ description: "แสดงรายระเอียด to_asset  " })
   @ApiBadRequestResponse({ description: "ไม่สามารถบันทึกข้อมูลได้" })
-  @ApiTags("asset")
-  switch(@Query('from_id') from_id: number, @Query('to_id') to_id: number) {
-    return this.assetsService.switch(from_id, to_id);
+  @ApiTags("switch")
+  switch(@Body() switchassetdto: SwitchAssetDto) {
+    return this.assetsService.switch(switchassetdto);
   }
+
   /*   @Delete(':id')
     remove(@Param('id') id: string) {
       return this.assetsService.remove(+id);
