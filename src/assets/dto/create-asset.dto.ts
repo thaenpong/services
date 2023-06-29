@@ -46,8 +46,7 @@ export class CreateAssetDto {
     @ApiProperty({ description: "หมายเหตุ", example: "สำรอง IT" })
     note: string
 
-    @IsString()
-    @IsNotEmpty()
+
     @ApiProperty({ description: "หมายเหตุ", example: "ไม่ติดแท็ก" })
     description: string
 

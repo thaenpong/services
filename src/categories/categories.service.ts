@@ -19,10 +19,12 @@ export class CategoriesService {
   ) { }
 
   //-----------------------------------------------------------------------------------------------------  บันทึกข้อมูล
-  async create(createCategoryDto) {
+  async create(createCategoryDto: any) {
     try {
       //เปลียนตัวย่อเป็นตัวใหญ่
-      createCategoryDto.shortname = createCategoryDto.shortname.toLocaleUpperCase()
+      createCategoryDto.shortname = createCategoryDto.shortName.toLocaleUpperCase()
+      delete (createCategoryDto.shortName)
+      createCategoryDto.staff_employee_id
       //บันทึกข้อมูล
       const insert = await this.CategoryRepository.save(createCategoryDto);
       return { 'message': 'success', 'data': insert }
@@ -79,10 +81,11 @@ export class CategoriesService {
   }
 
   //---------------------------------------------------------------------------------------------------- อัพเดทข้อมูล
-  async update(id: number, updateCategoryDto: UpdateCategoryDto) {
+  async update(id: number, updateCategoryDto: any) {
     try {
       //เปลียนตัวย่อเป็นตัวใหญ่
-      updateCategoryDto.shortname = updateCategoryDto.shortname.toLocaleUpperCase()
+      updateCategoryDto.shortname = updateCategoryDto.shortName.toLocaleUpperCase()
+      delete (updateCategoryDto.shortName)
       //อัพเดท
       const update = await this.CategoryRepository.update(id, updateCategoryDto);
       if (update) {

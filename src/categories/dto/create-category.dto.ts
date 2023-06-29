@@ -10,10 +10,9 @@ export class CreateCategoryDto {
     @IsNotEmpty()
     @IsString()
     @ApiProperty({ description: "ตัวอักษรย่อ", example: "MT." })
-    shortname: string
+    shortName: string
 
     @IsNotEmpty()
-    @IsNumber()
     @ApiProperty({ description: "id ผู้สร้าง", example: "9165061501" })
     staff_employee_id: number
 }

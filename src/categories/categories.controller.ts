@@ -8,7 +8,7 @@ import { ApiBadRequestResponse, ApiCreatedResponse, ApiTags } from '@nestjs/swag
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) { }
 
-  @Post()
+  @Post('create')
   @UsePipes(ValidationPipe)
   @ApiCreatedResponse({ description: "บันทึกข้อมูลหมวดหมู่สำเร็จ" })
   @ApiBadRequestResponse({ description: "ไม่สามารถบันทึกข้อมูลได้" })
