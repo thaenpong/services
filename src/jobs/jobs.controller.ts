@@ -16,8 +16,10 @@ export class JobsController {
   @ApiCreatedResponse({ description: "บันทึกข้อมูลแจ้งซ่อมสำเร็จ" })
   @ApiBadRequestResponse({ description: "ไม่สามารถบันทึกข้อมูลได้" })
   @ApiTags('job')
-  create(@Body() createJobDto: CreateJobDto) {
-    return this.jobsService.create(createJobDto);
+  async create(@Body() createJobDto: CreateJobDto) {
+    const res = await this.jobsService.create(createJobDto);
+    this.jobsService.sendNotification(res.data.id, res.data.user_detail, res.data.user_employee_id, res.data.asset.code)
+    return res;
   }
 
   @Get('status/:status')

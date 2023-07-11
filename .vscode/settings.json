@@ -2,7 +2,8 @@
     "sqltools.connections": [
         {
             "mysqlOptions": {
-                "authProtocol": "default"
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
             },
             "previewLimit": 50,
             "server": "159.223.89.150",

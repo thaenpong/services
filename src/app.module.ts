@@ -13,10 +13,10 @@ import { HistoriesModule } from './histories/histories.module';
 @Module({
   imports: [TypeOrmModule.forRoot({
     type: 'mysql',
-    host: 'localhost',
+    host: '159.223.89.150',
     port: 3306,
     username: 'root',
-    password: '',
+    password: 'Admin1989',
     database: 'services',
     autoLoadEntities: true,
     synchronize: true,
