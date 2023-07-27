@@ -3,8 +3,8 @@ import { AssetsService } from './assets.service';
 import { CreateAssetDto } from './dto/create-asset.dto';
 import { UpdateAssetDto } from './dto/update-asset.dto';
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { get } from 'http';
 import { SwitchAssetDto } from './dto/switch-asset.dto';
+import { Public } from 'src/auth/decorators';
 
 @Controller('assets')
 export class AssetsController {
@@ -26,6 +26,7 @@ export class AssetsController {
   }
 
   @Get()
+  @Public()
   @ApiTags("asset")
   @ApiOkResponse({ description: "แสดงรายการทรัพสินทั้งหมด ไม่รวมถอดถอน" })
   findAll() {

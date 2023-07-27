@@ -9,21 +9,39 @@ import { JobsModule } from './jobs/jobs.module';
 import { StatusModule } from './status/status.module';
 import { RemovedModule } from './removed/removed.module';
 import { HistoriesModule } from './histories/histories.module';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './auth/auth.guard';
 
 @Module({
-  imports: [TypeOrmModule.forRoot({
-    type: 'mysql',
-    host: '159.223.89.150',
-    port: 3306,
-    username: 'root',
-    password: 'Admin1989',
-    database: 'services',
-    autoLoadEntities: true,
-    synchronize: true,
-  }), AssetsModule, CategoriesModule, JobsModule, StatusModule, RemovedModule, HistoriesModule,],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: process.env.DATABASE_URL,
+      port: parseInt(process.env.DATABASE_PORT),
+      username: process.env.DATABASE_USER,
+      password: process.env.DATABASE_PASSWORD,
+      database: process.env.DATABASE_NAME,
+      autoLoadEntities: true,
+      synchronize: true,
+    }), AssetsModule, CategoriesModule, JobsModule, StatusModule, RemovedModule, HistoriesModule, AuthModule, UserModule,
+
+  ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [{
+    provide: APP_GUARD,
+    useClass: AuthGuard,
+  },
+    AppService],
 })
 export class AppModule {
-  constructor(private dataSource: DataSource) { }
+  constructor(private dataSource: DataSource) {
+  }
 }
+

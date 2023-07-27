@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { StatusService } from './status.service';
 import { ApiBadRequestResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/auth/decorators';
 
 
 @Controller('status')
@@ -10,6 +11,7 @@ export class StatusController {
 
 
   @Get('job_status')
+  @Public()
   @ApiOkResponse({ description: "แสดงสถานะงาน" })
   @ApiBadRequestResponse({ description: "ไม่มารถค้นหาข้อมูลได้" })
   @ApiTags('status')
@@ -42,6 +44,7 @@ export class StatusController {
   }
 
   @Get('asset')
+  @Public()
   @ApiOkResponse({ description: "สถานะของทรัพย์สิน" })
   @ApiBadRequestResponse({ description: "ไม่มารถค้นหาข้อมูลได้" })
   @ApiTags('status')

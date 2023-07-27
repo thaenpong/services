@@ -91,7 +91,7 @@ export class AssetsService {
       //บันทึกลงตัวแปล
       createAssetDto.status = { id: 1 };
 
-      console.log("here");
+
       //ลบ categories_id
       const categories_id = createAssetDto.categories_id;
       delete createAssetDto.categories_id;

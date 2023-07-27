@@ -6,11 +6,13 @@ import { ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse, ApiParam, Api
 import { DoneJobDto } from './dto/done-job.dto';
 import { CancelJobDto } from './dto/cancel-job.dto';
 import { VerifyJobDto } from './dto/verify-job.dto';
+import { Public } from 'src/auth/decorators';
 
 @Controller('jobs')
 export class JobsController {
   constructor(private readonly jobsService: JobsService) { }
 
+  @Public()
   @Post()
   @UsePipes(ValidationPipe)
   @ApiCreatedResponse({ description: "บันทึกข้อมูลแจ้งซ่อมสำเร็จ" })
@@ -22,6 +24,7 @@ export class JobsController {
     return res;
   }
 
+  @Public()
   @Get('status/:status')
   @ApiParam({ name: 'status', description: 'ID สถานะ', example: 1 })
   @ApiOkResponse({ description: "รายการแจ้งซ่อมตามสถานะงาน 1.ยังไม่รับงาน 2. กำลังปฎิบัติ 3.เสร็จ 4.ยกเลิก" })
@@ -31,6 +34,7 @@ export class JobsController {
     return this.jobsService.finds(+status);
   }
 
+  @Public()
   @Get(':id')
   @ApiParam({ name: 'id', description: 'ID งาน', example: 1 })
   @ApiOkResponse({ description: "แสดงรายระเอียดงาน" })
@@ -40,7 +44,7 @@ export class JobsController {
     return this.jobsService.findOne(+id);
   }
 
-
+  @Public()
   @Patch('accept/:id')
   @ApiTags('job')
   @UsePipes(ValidationPipe)
@@ -51,6 +55,7 @@ export class JobsController {
     return this.jobsService.accept(+id, acceptJobDto);
   }
 
+  @Public()
   @Patch('done/:id')
   @UsePipes(ValidationPipe)
   @ApiTags('job')
@@ -61,6 +66,7 @@ export class JobsController {
     return this.jobsService.done(+id, doneJobDto);
   }
 
+  @Public()
   @Patch('cancel/:id')
   @UsePipes(ValidationPipe)
   @ApiTags('job')
@@ -71,6 +77,7 @@ export class JobsController {
     return this.jobsService.cancel(+id, cancelJobDto);
   }
 
+  @Public()
   @Patch('verify/:id')
   @UsePipes(ValidationPipe)
   @ApiTags('job')
