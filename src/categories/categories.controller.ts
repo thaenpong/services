@@ -3,6 +3,7 @@ import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/auth/decorators';
 
 @Controller('categories')
 export class CategoriesController {
@@ -18,6 +19,7 @@ export class CategoriesController {
   }
 
   @Get()
+  @Public()
   @ApiCreatedResponse({ description: "แสดงรายการหมวดหมู่" })
   @ApiBadRequestResponse({ description: "ไม่สามารถเรียกข้อมูลได้" })
   @ApiTags("categories")
