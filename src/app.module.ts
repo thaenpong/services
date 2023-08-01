@@ -14,6 +14,8 @@ import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/auth.guard';
+import { EmployeeModule } from './employee/employee.module';
+import { DepartmentModule } from './department/department.module';
 
 @Module({
   imports: [
@@ -30,7 +32,7 @@ import { AuthGuard } from './auth/auth.guard';
       database: process.env.DATABASE_NAME,
       autoLoadEntities: true,
       synchronize: true,
-    }), AssetsModule, CategoriesModule, JobsModule, StatusModule, RemovedModule, HistoriesModule, AuthModule, UserModule,
+    }), AssetsModule, CategoriesModule, JobsModule, StatusModule, RemovedModule, HistoriesModule, AuthModule, UserModule, EmployeeModule, DepartmentModule,
 
   ],
   controllers: [AppController],
