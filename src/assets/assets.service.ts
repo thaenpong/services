@@ -76,7 +76,7 @@ export class AssetsService {
 
 
   //-------------------------------------------------------------------------------บันทึกข้อมูล
-  async create(createAssetDto) {
+  async create(createAssetDto: any) {
 
     try {
       //เปลี่ยนให้เป็นตัวใหญ่
