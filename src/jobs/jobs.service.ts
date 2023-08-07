@@ -9,12 +9,13 @@ import { JobDoneStatus } from 'src/status/entities/job-done-status.entiy';
 import { JobVerifyStatus } from "src/status/entities/Job-verify-status.entity";
 import { AssetStatus } from 'src/status/entities/asset-status.entyty';
 import axios from 'axios';
+import { EmployeeService } from 'src/employee/employee.service';
 
 @Injectable()
 export class JobsService {
   client: any;
   private readonly urlLineNotification = 'https://notify-api.line.me/api/notify';
-  private readonly lineNotifyToken = 'string';
+  private readonly lineNotifyToken = process.env.LINE_NOTIFY;
   constructor(
     //import Entity Job
     @InjectRepository(Job)
@@ -41,19 +42,21 @@ export class JobsService {
     @InjectRepository(AssetStatus)
     private AssetStatusRespository: Repository<AssetStatus>,
 
+    private EmpRepo: EmployeeService,
 
   ) {
   }
 
   async sendNotification(id: number, detail: string, user_employee_id: number, code: string) {
     try {
-      const text = `งานซ่อมใหม่ \n รายระเอียด : ${detail} \n รหัส : ${code}  \n แจ้งโดย : ${user_employee_id} \n Link : https://sil.hubnova.app/it/job/detail/${id}`;
+      const empName = await this.EmpRepo.findEmpId(String(user_employee_id));
+      const text = `งานซ่อมใหม่ \n รายระเอียด : ${detail} \n รหัส : ${code}  \n แจ้งโดย : ${empName.firstName}  ${empName.lastName} \n Link : https://sil.hubnova.app/it/job/detail/${id}`;
       const response = await axios.post(
         this.urlLineNotification,
         `message=${encodeURIComponent(text)}`,
         {
           headers: {
-            'Authorization': `Bearer fdo9gKBNXoAWod84ynD8Fkh7ZM4hp8KYhPySOmPrghD`,
+            'Authorization': `Bearer ${this.lineNotifyToken}`,
             'Content-Type': 'application/x-www-form-urlencoded',
             'Access-Control-Allow-Origin': '*',
           },

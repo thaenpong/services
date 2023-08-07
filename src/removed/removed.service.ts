@@ -47,11 +47,11 @@ export class RemovedService {
   }
 
   //------------------------------------------------------------------------------------------------------- insert
-  async create(createRemovedDto) {
+  async create(createRemovedDto: any) {
     try {
       // เช็คทรัพย์สิน
       const asset = await this.AssetsRespository.findOne({ where: { id: createRemovedDto.asset_id } });
-
+      await this.AssetsRespository.update(createRemovedDto.asset_id, { status: { id: 4 } });
       //ถ้าไม่มี return error
       if (!asset) { throw new Error("Asset ID not found in the database"); }
 
@@ -66,6 +66,8 @@ export class RemovedService {
 
       //บันทึกข้อมูล
       const insert = await this.RemovedRespository.save(createRemovedDto);
+
+
 
       //ดึงข้อมูล 
       const res = await this.RemovedRespository.findOne({ where: { id: insert.id }, relations: this.relations() })

@@ -29,6 +29,7 @@ export class AuthController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @Public()
   @Post('signup')
   @UsePipes(ValidationPipe)
   signUp(@Body() signUpDto: SignUpDto) {

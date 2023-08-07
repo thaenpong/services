@@ -17,4 +17,6 @@ export class CreateRemovedDto {
     @ApiProperty({ description: "สาเหตุการถอดถอน", example: "บอร์ดเสีย" })
     detail: string;
 
+
+
 }

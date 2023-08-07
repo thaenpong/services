@@ -3,6 +3,7 @@ import { RemovedService } from './removed.service';
 import { CreateRemovedDto } from './dto/create-removed.dto';
 import { UpdateRemovedDto } from './dto/update-removed.dto';
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/auth/decorators';
 
 @Controller('removed')
 export class RemovedController {
@@ -44,6 +45,7 @@ export class RemovedController {
   }
 
   @Patch(':id')
+  @Public()
   @ApiTags('remove')
   @ApiParam({ name: 'id', description: 'ID การถอดถอน', example: 1 })
   @UsePipes(ValidationPipe)

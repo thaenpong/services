@@ -5,7 +5,7 @@ import { UpdateEmployeeDto } from './dto/update-employee.dto';
 
 @Controller('employee')
 export class EmployeeController {
-  constructor(private readonly employeeService: EmployeeService) {}
+  constructor(private readonly employeeService: EmployeeService) { }
 
   @Post()
   create(@Body() createEmployeeDto: CreateEmployeeDto) {
@@ -20,6 +20,11 @@ export class EmployeeController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.employeeService.findOne(+id);
+  }
+
+  @Get('/employee_id/:id')
+  findEmpId(@Param('id') id: string) {
+    return this.employeeService.findEmpId(id);
   }
 
   @Patch(':id')

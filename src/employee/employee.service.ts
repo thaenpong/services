@@ -15,13 +15,30 @@ export class EmployeeService {
 
   }
 
+
+  async findEmpId(id: string) {
+    try {
+      const res = await this.employeeRepo.findOne({ where: { employeeCode: id }, relations: ['department'] });
+      return res
+    } catch (error) {
+      // return error
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: error.message,
+        },
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
   create(createEmployeeDto: CreateEmployeeDto) {
     return 'This action adds a new employee';
   }
 
   async findAll() {
     try {
-      const res = await this.employeeRepo.find();
+      const res = await this.employeeRepo.find({ relations: ['department'] });
       return res
     } catch (error) {
       // return error
