@@ -8,6 +8,7 @@ import { Category } from 'src/categories/entities/category.entity';
 import { AssetStatus } from 'src/status/entities/asset-status.entyty';
 import { Uselogs } from './entities/use-logs.entity';
 import { SwitchAssetDto } from './dto/switch-asset.dto';
+import { stringify } from 'querystring';
 
 
 const relations = ['category', 'status', 'removed'];
@@ -30,14 +31,13 @@ export class AssetsService {
   ) { }
 
   async closelog(id_asset: number, staff_employee_id: number, user_employee_id: number, detail: string) {
-
+    console.log(detail)
     //ค้นหา Asset ใน table logs
     const uselogs = await this.UseLogsRespository.findOne({ relations: ['asset'], where: { asset: { id: id_asset }, todate: IsNull() }, order: { id: 'desc' } });
 
     //----------------มีข้อมูล
     if (uselogs) {
       //------------------ employee id ไม่เหมือนกัน
-      console.log(uselogs)
       if (uselogs.user_employee_id != user_employee_id) {
         //ปิด log
         const cdata = {
@@ -59,9 +59,7 @@ export class AssetsService {
         }
       }
     } else {
-      console.log(user_employee_id)
       if (user_employee_id != null) {
-        console.log(id_asset);
         //สร้าง log row ใหม่
         const data = {
           asset: { id: id_asset },
@@ -342,8 +340,8 @@ export class AssetsService {
       //--------------------------------- โหลดข้อมูล to_asset ที่อัพเดทแล้ว
       const res = await this.AssetsRespository.findOne({ where: { id: to_asset.id }, relations: relations });
 
-      await this.closelog(from_asset.id, switchassetdto.staff_employee_id, to_asset.user_employee_id, switchassetdto.detail);
-      await this.closelog(to_asset.id, switchassetdto.staff_employee_id, from_asset.user_employee_id, switchassetdto.detail);
+      const test = await this.closelog(from_asset.id, switchassetdto.staff_employee_id, to_asset.user_employee_id, `เปลี่ยนกับ ${to_asset.code}  สาเหตุ  ${from_asset.code} ${switchassetdto.detail}`);
+      await this.closelog(to_asset.id, switchassetdto.staff_employee_id, from_asset.user_employee_id, `${from_asset.code} ${switchassetdto.detail}`);
       //--------------------------------- return
       return { 'message': 'success', 'data': res };
     } catch (error) {
@@ -377,6 +375,41 @@ export class AssetsService {
    } */
 
 
+  //----------------------------------------------------- Gen Code ล่าสุด
+  async getLatestAsset(id: number) {
+    function modifyCode(inputCode: string): string {
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear();
+      const [prefix, middle, lastPart] = inputCode.split('.');
+
+      const yaer = (currentYear + 543).toString().slice(-2);
+
+      let newLastPart = parseInt(lastPart);
+      if (yaer === (middle).toString()) {
+        newLastPart = newLastPart + 1;
+      } else {
+        newLastPart = 1;
+      }
+
+      return `${prefix}.${yaer}.${newLastPart.toString().padStart(2, '0')}`;
+    }
+
+    try {
+      const res = await this.AssetsRespository.findOne({ where: { category: { id: id } }, order: { id: 'desc' } });
+      return (modifyCode(res.code));
+
+    } catch (error) {
+      //---------------------- return error massage
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.BAD_REQUEST,
+          //show error mesage
+          message: error.message,
+        },
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
 
 }
 

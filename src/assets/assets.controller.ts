@@ -83,6 +83,7 @@ export class AssetsController {
   }
 
   @Post('switch/')
+  @ApiTags('asset')
   @UsePipes(ValidationPipe)
   @ApiCreatedResponse({ description: "แสดงรายระเอียด to_asset  " })
   @ApiBadRequestResponse({ description: "ไม่สามารถบันทึกข้อมูลได้" })
@@ -95,4 +96,14 @@ export class AssetsController {
     remove(@Param('id') id: string) {
       return this.assetsService.remove(+id);
     } */
+
+  @Get('autogencode/:id')
+  @ApiTags('asset')
+  getLatestAsset(@Param('id') id: number) {
+    if (id == 19) {
+      return ('');
+    } else {
+      return this.assetsService.getLatestAsset(+id);
+    }
+  }
 }
