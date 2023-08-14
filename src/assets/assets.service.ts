@@ -396,7 +396,12 @@ export class AssetsService {
 
     try {
       const res = await this.AssetsRespository.findOne({ where: { category: { id: id } }, order: { id: 'desc' } });
-      return (modifyCode(res.code));
+      if (res) {
+        return (modifyCode(res.code));
+      } else {
+        return ('');
+      }
+
 
     } catch (error) {
       //---------------------- return error massage

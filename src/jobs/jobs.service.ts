@@ -296,6 +296,22 @@ export class JobsService {
     }
   }
 
+  async GetEmp(emp_code: string) {
+    try {
+      const res = await this.JobResponsitory.find({ where: { user_employee_id: Number(emp_code) }, relations: this.joinselect() });
+      return res;
+    } catch (error) {
+      // return error
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: error.message,
+        },
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
   async verify(id, verifyJobDto) {
     //กำหนดตัวแปร
     let verify = {
@@ -355,5 +371,10 @@ export class JobsService {
       );
     }
   }
+
+
+
 }
+
+
 

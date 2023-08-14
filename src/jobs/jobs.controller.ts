@@ -88,5 +88,12 @@ export class JobsController {
     return this.jobsService.verify(+id, verifyJobDto)
   }
 
-
+  @Get('/getemp/:id')
+  @ApiParam({ name: 'id', description: 'ID พนักงาน', example: '9165061501' })
+  @ApiOkResponse({ description: "แสดงรายระเอียดงาน" })
+  @ApiBadRequestResponse({ description: "ไม่มารถค้นหาข้อมูลได้" })
+  @ApiTags('job')
+  getEmp(@Param('id') id: string) {
+    return this.jobsService.GetEmp(id);
+  }
 }
