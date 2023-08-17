@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Job } from './entities/job.entity';
-import { Not, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { Asset } from 'src/assets/entities/asset.entity';
 import { JobStatus } from 'src/status/entities/job-status.entity';
 import { JobAcceptStatus } from 'src/status/entities/job-accept-status.entity';
@@ -10,6 +10,7 @@ import { JobVerifyStatus } from "src/status/entities/Job-verify-status.entity";
 import { AssetStatus } from 'src/status/entities/asset-status.entyty';
 import axios from 'axios';
 import { EmployeeService } from 'src/employee/employee.service';
+import { count } from 'console';
 
 @Injectable()
 export class JobsService {
@@ -371,6 +372,76 @@ export class JobsService {
       );
     }
   }
+
+
+  async GetCountMonth() {
+    try {
+
+      const allJob = await this.JobResponsitory.count({
+        where: {
+          status: {
+            id: Not(6)
+          }
+        }
+      })
+
+      const newJob = await this.JobResponsitory.count({
+        where: {
+          status: {
+            id: 1
+          }
+        }
+      })
+
+      const acceptedJob = await this.JobResponsitory.count({
+        where: {
+          status: {
+            id: In([2, 3])
+          },
+
+        }
+      })
+
+
+
+      const currentYear = new Date().getFullYear();
+      const monthlyData = await this.JobResponsitory.createQueryBuilder('job')
+        .select([
+          'SUM(CASE WHEN MONTH(job.datecreate) = 1 THEN 1 ELSE 0 END) AS JAN',
+          'SUM(CASE WHEN MONTH(job.datecreate) = 2 THEN 1 ELSE 0 END) AS FEB',
+          'SUM(CASE WHEN MONTH(job.datecreate) = 3 THEN 1 ELSE 0 END) AS MAR',
+          'SUM(CASE WHEN MONTH(job.datecreate) = 4 THEN 1 ELSE 0 END) AS APR',
+          'SUM(CASE WHEN MONTH(job.datecreate) = 5 THEN 1 ELSE 0 END) AS MAY',
+          'SUM(CASE WHEN MONTH(job.datecreate) = 6 THEN 1 ELSE 0 END) AS JUN',
+          'SUM(CASE WHEN MONTH(job.datecreate) = 7 THEN 1 ELSE 0 END) AS JUL',
+          'SUM(CASE WHEN MONTH(job.datecreate) = 8 THEN 1 ELSE 0 END) AS AUG',
+          'SUM(CASE WHEN MONTH(job.datecreate) = 9 THEN 1 ELSE 0 END) AS SEP',
+          'SUM(CASE WHEN MONTH(job.datecreate) = 10 THEN 1 ELSE 0 END) AS OCT',
+          'SUM(CASE WHEN MONTH(job.datecreate) = 11 THEN 1 ELSE 0 END) AS NOV',
+          'SUM(CASE WHEN MONTH(job.datecreate) = 12 THEN 1 ELSE 0 END) AS DECEM',
+        ]).where(`YEAR(job.datecreate) = :currentYear AND job.statusId != 6`, { currentYear })
+        .getRawOne();
+
+      const res = {
+        chart: monthlyData,
+        newJob: newJob,
+        acceptedJob: acceptedJob,
+        allJob: allJob,
+      }
+
+      return res;
+    } catch (error) {
+      // Handle the error
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: error.message,
+        },
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
 
 
 

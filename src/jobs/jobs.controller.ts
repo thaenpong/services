@@ -13,6 +13,13 @@ export class JobsController {
   constructor(private readonly jobsService: JobsService) { }
 
   @Public()
+  @Get('/dashboard/')
+  dashbaord() {
+    return this.jobsService.GetCountMonth()
+  }
+
+
+  @Public()
   @Post()
   @UsePipes(ValidationPipe)
   @ApiCreatedResponse({ description: "บันทึกข้อมูลแจ้งซ่อมสำเร็จ" })
@@ -96,4 +103,6 @@ export class JobsController {
   getEmp(@Param('id') id: string) {
     return this.jobsService.GetEmp(id);
   }
+
+
 }

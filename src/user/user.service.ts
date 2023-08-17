@@ -44,8 +44,6 @@ export class UserService {
     return await this.UserRepo.findOne({ where: { id: id } });
   }
 
-
-
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
