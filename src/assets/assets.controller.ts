@@ -97,6 +97,7 @@ export class AssetsController {
       return this.assetsService.remove(+id);
     } */
 
+  //รับรหัสทรัพย์สินล่าสุด
   @Get('autogencode/:id')
   @ApiTags('asset')
   getLatestAsset(@Param('id') id: number) {

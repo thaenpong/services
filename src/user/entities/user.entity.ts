@@ -7,13 +7,13 @@ export class User {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ unique: true })
+    @Column({ unique: true, comment: 'username' })
     username: string;
 
-    @Column()
+    @Column({ comment: 'รหัสผ่าน' })
     password: string;
 
-    @Column()
+    @Column({ comment: 'ชื่อ' })
     name: string;
 
     @Column({ comment: "รหัสพนักงาน", type: 'bigint', unique: true, nullable: false })

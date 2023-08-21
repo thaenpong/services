@@ -18,18 +18,24 @@ export class AssetsService {
   //import entity
   constructor(
     @InjectRepository(Asset)
+    //ทรัพย์สิน
     private AssetsRespository: Repository<Asset>,
 
+    //หมวดหมู่
     @InjectRepository(Category)
     private CategoriesRespository: Repository<Category>,
 
+    //สถานะทรัพย์สิน
     @InjectRepository(AssetStatus)
     private AssetStatussRespository: Repository<AssetStatus>,
 
+    //ประวัติการใช้
     @InjectRepository(Uselogs)
     private UseLogsRespository: Repository<Uselogs>,
   ) { }
 
+
+  //ปิดประวัติการใช้ (uselogs)
   async closelog(id_asset: number, staff_employee_id: number, user_employee_id: number, detail: string) {
     console.log(detail)
     //ค้นหา Asset ใน table logs
@@ -58,7 +64,9 @@ export class AssetsService {
           await this.UseLogsRespository.save(odata);
         }
       }
-    } else {
+    }
+    //ถ้ายังไม่มีประวัติ 
+    else {
       if (user_employee_id != null) {
         //สร้าง log row ใหม่
         const data = {
@@ -66,7 +74,7 @@ export class AssetsService {
           from_staff_employee_id: staff_employee_id,
           user_employee_id: user_employee_id,
         }
-
+        //บันทึก
         await this.UseLogsRespository.save(data);
       }
     }
@@ -167,20 +175,28 @@ export class AssetsService {
   }
 
   //--------------------------------------------------------------------------- อัพเดทข้อมูล
-  async update(id, updateAssetDto) {
+  async update(id: number, updateAssetDto: any) {
     try {
+      //set data
       const user_employee_id = updateAssetDto.user_employee_id;
       const from_staff_employee_id = updateAssetDto.staff_employee_id;
       const to_staff_employee_id = updateAssetDto.staff_employee_id;
-
       delete updateAssetDto.staff_employee_id;
+
       //เปลี่ยนให้เป็นตัวใหญ่
       updateAssetDto.code = updateAssetDto.code.toUpperCase();
+      //ค้นหา หมวดหมู่
       const category = await this.CategoriesRespository.findOne({ where: { id: updateAssetDto.categories_id, } })
+
+      //ไม่มีข้อมูล หมวดหมู่
       if (!category) {
         throw new Error("Category ID not found in the database")
-      } else {
+      }
+      //มีข้อมูล 
+      else {
+        // เรียกข้อมูลทรัพย์สิน
         const asset = await this.AssetsRespository.findOne({ where: { id: id, status: Not(3) } });
+        // ถ้าไม่มีทรัพย์สิน
         if (!asset) {
           throw new Error("Asset ID not found in the database")
         }
@@ -245,10 +261,12 @@ export class AssetsService {
   //----------------------------------------------------------------- ค้นหาตาม category
   async findcategory(id: any) {
     try {
+      // ค้นหา หมวดหมู่
       const category = await this.CategoriesRespository.findOne({ where: { id: id } });
       if (!category) {
         throw new Error("Category ID not found in the database");
       }
+      //ค้นหา ทรัพย์สิน ตามหมวดหมู่
       const res = await this.AssetsRespository.find({ where: { category: category, status: Not(3) }, relations: relations });
       return { 'message': 'success', 'data': res };
     } catch (error) {
@@ -266,10 +284,12 @@ export class AssetsService {
   //------------------------------------------------------------------------ หาตาม สถานะ
   async status(id: any) {
     try {
+      //ค้นหาสถานะ
       const status = await this.AssetStatussRespository.findOne({ where: { id: id } });
       if (!status) {
         throw new Error("Status ID not found in the database");
       }
+      //ค้นหาทรัพย์สินตามสถานะ
       const res = await this.AssetsRespository.find({ where: { status: status }, relations: relations });
       return { 'message': 'success', 'data': res };
     } catch (error) {
@@ -304,6 +324,7 @@ export class AssetsService {
   //---------------------------------------------------------- ค้นหาตามรหัสผู้ใช้
   async getempid(user_employee_id: number) {
     try {
+      //ค้นหา
       const res = await this.AssetsRespository.find({ where: { user_employee_id: user_employee_id, status: Not(3) } });
       return { 'message': 'success', 'data': res };
     } catch (error) {
@@ -318,7 +339,7 @@ export class AssetsService {
     }
   }
 
-  //--------------------------------------------------------------------------------------------------------------------------------- เปลี่ยน ทรัพย์สิน
+  //---------------------------------------------------------------------------------------------------- เปลี่ยนทรัพย์สิน
   async switch(switchassetdto: SwitchAssetDto) {
     try {
       //-------------------------------- ดึงข้อมูล
@@ -340,7 +361,7 @@ export class AssetsService {
       //--------------------------------- โหลดข้อมูล to_asset ที่อัพเดทแล้ว
       const res = await this.AssetsRespository.findOne({ where: { id: to_asset.id }, relations: relations });
 
-      const test = await this.closelog(from_asset.id, switchassetdto.staff_employee_id, to_asset.user_employee_id, `เปลี่ยนกับ ${to_asset.code}  สาเหตุ  ${from_asset.code} ${switchassetdto.detail}`);
+      //อัพเดทประวัติการใช้
       await this.closelog(to_asset.id, switchassetdto.staff_employee_id, from_asset.user_employee_id, `${from_asset.code} ${switchassetdto.detail}`);
       //--------------------------------- return
       return { 'message': 'success', 'data': res };
@@ -377,32 +398,31 @@ export class AssetsService {
 
   //----------------------------------------------------- Gen Code ล่าสุด
   async getLatestAsset(id: number) {
+
+
     function modifyCode(inputCode: string): string {
-      const currentDate = new Date();
-      const currentYear = currentDate.getFullYear();
-      const [prefix, middle, lastPart] = inputCode.split('.');
-
-      const yaer = (currentYear + 543).toString().slice(-2);
-
+      // example CS.56.66
+      const currentDate = new Date(); //วันที่
+      const currentYear = currentDate.getFullYear(); //ปี
+      const [prefix, middle, lastPart] = inputCode.split('.'); //แยกข้อความ prefix= CS, middle = 56, lastPart = 66 
+      const yaer = (currentYear + 543).toString().slice(-2);//ตัดเหลือแค่ 2 ตัวท้าย
       let newLastPart = parseInt(lastPart);
-      if (yaer === (middle).toString()) {
-        newLastPart = newLastPart + 1;
-      } else {
-        newLastPart = 1;
+      if (yaer === (middle).toString()) {//ถ้าปีปัจจุบัน = ส่วนกลาง
+        newLastPart = newLastPart + 1; //เพิ่ม หรัส = 1(ส่วนท้าย)
+      } else {//ถ้าปีไม่ตรงกันปัจจุบัน
+        newLastPart = 1; //เริ่มนับใหม่
       }
-
       return `${prefix}.${yaer}.${newLastPart.toString().padStart(2, '0')}`;
     }
-
     try {
+      //ค้นหาทรัพย์สินล่าสุดตามหมวดหมู่
       const res = await this.AssetsRespository.findOne({ where: { category: { id: id } }, order: { id: 'desc' } });
       if (res) {
+        //รับรหัสใหม่
         return (modifyCode(res.code));
       } else {
         return ('');
       }
-
-
     } catch (error) {
       //---------------------- return error massage
       throw new HttpException(

@@ -7,24 +7,25 @@ export class Employee {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ comment: 'รหัสพนักงาน' })
     employeeCode: string;
 
-    @Column()
+    @Column({ comment: 'ชื่อ' })
     firstName: string;
 
-    @Column()
+    @Column({ comment: 'นามสกุล' })
     lastName: string;
 
-    @CreateDateColumn({ type: 'timestamp' })
+    @CreateDateColumn({ type: 'timestamp', comment: 'วันที่สร้าง' })
     createAt: Date;
 
-    @Column()
+    @Column({ comment: 'ซื่อเล่น' })
     nickName: string;
 
-    @Column({ type: 'tinyint' })
+    @Column({ type: 'tinyint', comment: 'สถานะ' })
     status: number;
 
+    //่join แผนก
     @ManyToOne(() => Department, department => department.id)
     department: Department;
 }

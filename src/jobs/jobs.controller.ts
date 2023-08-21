@@ -12,7 +12,9 @@ import { Public } from 'src/auth/decorators';
 export class JobsController {
   constructor(private readonly jobsService: JobsService) { }
 
+  //----------------------------- dashboard
   @Public()
+  @ApiTags('job')
   @Get('/dashboard/')
   dashbaord() {
     return this.jobsService.GetCountMonth()

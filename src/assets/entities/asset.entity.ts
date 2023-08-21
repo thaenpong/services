@@ -55,13 +55,16 @@ export class Asset {
     @Column({ nullable: true, default: null, comment: "วันหมดประกัน" })
     warranty_expires: Date
 
+    // join งาน
     @OneToMany(() => Job, job => job.asset)
     job: Job[];
 
+    //Join ถอดถอน
     @OneToOne(() => Removed, removed => removed.asset)
     @JoinColumn()
     removed: Removed;
 
+    //Join ประวัติการใช้
     @OneToMany(() => Uselogs, uselogs => uselogs.asset)
     uselog: Uselogs[];
 }

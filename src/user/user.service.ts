@@ -15,8 +15,10 @@ export class UserService {
 
   }
 
+  //---------------------------------------- เพิ่มผู้ใช้
   async create(createUserDto: CreateUserDto) {
     try {
+      //บันทึก
       const save = await this.UserRepo.save(createUserDto);
       const response = {
         status: 'ok',
@@ -32,22 +34,27 @@ export class UserService {
     }
   }
 
+  //----------------------------------------------- ค้นหาทั้งหมด
   findAll() {
     return `This action returns all user`;
   }
 
+  //------------------------------------------------- ค้นหา username
   async findOneUserName(username: string): Promise<User | undefined> {
     return await this.UserRepo.findOne({ where: { username: username } });
   }
 
+  //----------------------------------------------------------- ค้นหา ID
   async findOneId(id: number) {
     return await this.UserRepo.findOne({ where: { id: id } });
   }
 
+  //-------------------------------------------------------------- แก้ไขข้อมูล
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
 
+  //---------------------------------------------------------------- ลบ
   remove(id: number) {
     return `This action removes a #${id} user`;
   }

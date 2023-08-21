@@ -9,6 +9,7 @@ import { Public } from 'src/auth/decorators';
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) { }
 
+  //------------------------------------------------------- สร้างหมวดหมู่
   @Post('create')
   @UsePipes(ValidationPipe)
   @ApiCreatedResponse({ description: "บันทึกข้อมูลหมวดหมู่สำเร็จ" })
@@ -18,6 +19,7 @@ export class CategoriesController {
     return this.categoriesService.create(createCategoryDto);
   }
 
+  //----------------------------------------------------------- รับข้อมูลหมวดหมู่
   @Get()
   @Public()
   @ApiCreatedResponse({ description: "แสดงรายการหมวดหมู่" })
@@ -27,6 +29,7 @@ export class CategoriesController {
     return this.categoriesService.findAll();
   }
 
+  //----------------------------------------------------------  ค้นหาจาก ID
   @Get(':id')
   @ApiCreatedResponse({ description: "แสดงรายระเอียดหมวดหมู่" })
   @ApiBadRequestResponse({ description: "ไม่สามารถเรียกข้อมูลได้" })
@@ -35,6 +38,7 @@ export class CategoriesController {
     return this.categoriesService.findOne(+id);
   }
 
+  //----------------------------------------------------------- แก้ไขข้อมูล
   @Patch(':id')
   @ApiCreatedResponse({ description: "อัพเดทข้อมูลหมวดหมู่" })
   @ApiBadRequestResponse({ description: "ไม่สามารถอัพเดทข้อมูลได้" })
@@ -43,6 +47,7 @@ export class CategoriesController {
     return this.categoriesService.update(+id, updateCategoryDto);
   }
 
+  //---------------------------------------------------------- ลบข้อมูล
   @Delete(':id')
   @ApiCreatedResponse({ description: "ลบหมวดหมู่สำเร็จ" })
   @ApiBadRequestResponse({ description: "ลบหมวดหมู่ไม่สำเร็จ ไม่มี id ในระบบ / ยังมีทรัพย์สินที่ใช้ id หมวดหมู่นี้อยู่" })

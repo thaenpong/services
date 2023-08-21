@@ -48,11 +48,15 @@ export class JobsService {
   ) {
   }
 
+  //-------------------------------------------------- ส่ง Notifi ใน Line
   async sendNotification(id: number, detail: string, user_employee_id: number, code: string) {
     try {
+      // ค้นหาชื่อพนักงาน
       const empName = await this.EmpRepo.findEmpId(String(user_employee_id));
-      const text = `งานซ่อมใหม่ \n รายระเอียด : ${detail} \n รหัส : ${code}  \n แจ้งโดย : ${empName.firstName}  ${empName.lastName} \n Link : https://sil.hubnova.app/it/job/detail/${id}`;
-      const response = await axios.post(
+      //set text
+      const text = `งานซ่อมใหม่ \n รายระเอียด : ${detail} \n รหัส : ${code}  \n แจ้งโดย : ${empName.firstName}  ${empName.lastName} \n Link : https://www.thepackingservice.com/admin/job/${id}`;
+      //ส่ง
+      await axios.post(
         this.urlLineNotification,
         `message=${encodeURIComponent(text)}`,
         {
@@ -70,11 +74,12 @@ export class JobsService {
   }
 
   //อัพเดทสถานะของเครื่อง
-  private async assetstatus(status_id, asset_id: any) {
+  private async assetstatus(status_id: any, asset_id: any) {
     const status = await this.AssetStatusRespository.findOne({ where: { id: status_id } });
     await this.AssetsRespository.update(asset_id, { status: status });
   }
 
+  // join table
   private joinselect() {
     return ['asset', 'asset.status', 'asset.category', 'status', 'accept_status', 'done_status', 'verify_acceptable']
   }
@@ -297,8 +302,10 @@ export class JobsService {
     }
   }
 
+  //----------------------------------------------------------------------------------- ค้นหาตามรหัสพนักงาน
   async GetEmp(emp_code: string) {
     try {
+      //ค้นหา
       const res = await this.JobResponsitory.find({ where: { user_employee_id: Number(emp_code) }, relations: this.joinselect() });
       return res;
     } catch (error) {
@@ -373,37 +380,37 @@ export class JobsService {
     }
   }
 
-
+  //--------------------------------------------------------- ข้อมูลหน้า dashbaord
   async GetCountMonth() {
     try {
-
+      //ค้นหาจำนวนงาน
       const allJob = await this.JobResponsitory.count({
         where: {
           status: {
             id: Not(6)
           }
         }
-      })
+      });
 
+      // งานใหม่
       const newJob = await this.JobResponsitory.count({
         where: {
           status: {
             id: 1
           }
         }
-      })
+      });
 
+      //งาน กำลังปฏิบัติ
       const acceptedJob = await this.JobResponsitory.count({
         where: {
           status: {
             id: In([2, 3])
           },
-
         }
-      })
+      });
 
-
-
+      // ค้นงานงานทั้งหมด แยกเป็นเดือน
       const currentYear = new Date().getFullYear();
       const monthlyData = await this.JobResponsitory.createQueryBuilder('job')
         .select([
@@ -421,14 +428,12 @@ export class JobsService {
           'SUM(CASE WHEN MONTH(job.datecreate) = 12 THEN 1 ELSE 0 END) AS DECEM',
         ]).where(`YEAR(job.datecreate) = :currentYear AND job.statusId != 6`, { currentYear })
         .getRawOne();
-
       const res = {
         chart: monthlyData,
         newJob: newJob,
         acceptedJob: acceptedJob,
         allJob: allJob,
       }
-
       return res;
     } catch (error) {
       // Handle the error

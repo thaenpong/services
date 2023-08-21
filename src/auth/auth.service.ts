@@ -17,22 +17,24 @@ export class AuthService {
 
     }
 
-
+    //----------------------------------------- เข้าสุ่ระบบ
     async signIn(signInDto: SignInDto) {
-        const saltRounds = Number(process.env.SALT_ROUND);
         const username = signInDto.username;
         const pass = signInDto.password;
+        //ค้นหา Username
         const user = await this.userService.findOneUserName(username);
-        if (!user) {
+        if (!user) { // ไม่มี
             throw new UnauthorizedException();
         }
+        //เช็คระหัสผ่าน
         const Matches = await bcrypt.compare(pass, user.password);
 
-        if (!Matches) {
+        if (!Matches) { //ไม่ตรงกัน
             throw new UnauthorizedException();
         }
-
+        //set data
         const payload = { sub: user.id, username: user.username, name: user.name, emp_id: user.staff_employee_id };
+        //return ข้อมูล
         return {
             id: user.id,
             name: user.name,
@@ -41,24 +43,28 @@ export class AuthService {
         };
     }
 
+    //----------------------------------------------------------- สร้างUser
     async signUp(signUpDto: SignUpDto) {
         const saltRounds = Number(process.env.SALT_ROUND);
         const password = signUpDto.password;
 
+        // เช็คUsername ซ้ำ
         const existingUser = await this.userService.findOneUserName(signUpDto.username);
-        if (existingUser) {
+        if (existingUser) {//ถ้าซ้ำ
             throw new HttpException('Username Taken', HttpStatus.BAD_REQUEST);
         }
 
         try {
+            //เข้ารหัสรหัสผ่าน
             signUpDto.password = await bcrypt.hash(password, saltRounds);
+            //สร้าง User
             const newUserResponse = await this.userService.create(signUpDto);
 
-            if (newUserResponse.status === 'ok') {
+            if (newUserResponse.status === 'ok') {//สร้างสำเร็จ
                 const newUser = newUserResponse.data;
-                const { password: _, ...response } = newUser;
+                const { password: _, ...response } = newUser;//ดึงรหัสผ่านออกจากข้อมูล
                 return response;
-            } else {
+            } else {//สร้างไม่สำเร็จ
                 throw new HttpException(newUserResponse.data, HttpStatus.BAD_REQUEST);
             }
         } catch (error) {

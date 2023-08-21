@@ -7,9 +7,10 @@ export class Department {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ comment: 'ชื่อแผนก' })
     name: string;
 
+    // join ข้อมูลพนักงาน
     @OneToMany(() => Employee, employee => employee.department)
     employee: Employee[];
 

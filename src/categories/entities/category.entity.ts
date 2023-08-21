@@ -15,6 +15,7 @@ export class Category {
     @Column({ nullable: false, comment: "ID ผู้สร้าง", type: 'bigint' })
     staff_employee_id: number
 
+    //Join ทรัพย์สิน
     @OneToMany(() => Asset, asset => asset.category)
     assets: Asset[];
 }
